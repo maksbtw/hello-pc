@@ -1,0 +1,67 @@
+{
+  "input": "Hello",
+  "steps": [
+    {
+      "id": "mouse",
+      "component": "mouse",
+      "bytes": [0, 0, 0, 0],
+      "labels": ["dx", "dy", "buttons", "wheel"]
+    },
+    {
+      "id": "ssd",
+      "component": "ssd",
+      "bytes": [72, 101, 108, 108, 111],
+      "highlight": [0, 5]
+    },
+    {
+      "id": "ram",
+      "component": "ram",
+      "rows": [
+        { "address": "0x0000", "bytes": [72, 101, 108, 108] },
+        { "address": "0x0004", "bytes": [111, 0, 0, 0] }
+      ],
+      "highlight": [0, 5]
+    },
+    {
+      "id": "cpu-decode",
+      "component": "cpu",
+      "instructions": [
+        { "address": "0x0000", "bytes": [184, 72, 0, 0], "asm": "MOV AX, 'H'" },
+        { "address": "0x0004", "bytes": [184, 101, 0, 0], "asm": "MOV AX, 'e'" }
+      ],
+      "currentIndex": 0
+    },
+    {
+      "id": "text-encode",
+      "component": "cpu",
+      "chars": [
+        { "char": "H", "bytes": [72], "binary": ["01001000"] },
+        { "char": "e", "bytes": [101], "binary": ["01100101"] },
+        { "char": "l", "bytes": [108], "binary": ["01101100"] },
+        { "char": "l", "bytes": [108], "binary": ["01101100"] },
+        { "char": "o", "bytes": [111], "binary": ["01101111"] }
+      ]
+    },
+    {
+      "id": "raster",
+      "component": "gpu",
+      "width": 5,
+      "height": 3,
+      "pixels": [
+        [1, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1]
+      ]
+    },
+    {
+      "id": "display",
+      "component": "monitor",
+      "width": 5,
+      "height": 3,
+      "sample": [
+        { "x": 0, "y": 0, "rgb": [74, 222, 128] },
+        { "x": 4, "y": 2, "rgb": [96, 165, 250] }
+      ]
+    }
+  ]
+}

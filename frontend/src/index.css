@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tokeny stylu jako zmienne CSS (ciemny motyw). Lustro dla tailwind.config.ts. */
+:root {
+  --bg: #0b0d10;
+  --panel: #13161b;
+  --border: #232832;
+  --surface: #1a1e25;
+  --text: #e8eaed;
+  --text-muted: #9aa3ae;
+  --text-faint: #5f6873;
+  --lamp: #ffd9a0;
+  --accent: #f5a524;
+
+  --data-text: #4ade80;
+  --data-bytes: #60a5fa;
+  --data-bits: #a78bfa;
+  --data-instructions: #f472b6;
+
+  --state-success: #4ade80;
+  --state-warning: #fbbf24;
+  --state-error: #f87171;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, sans-serif;
+}

@@ -1,0 +1,20 @@
+# --- Node / frontend ---
+node_modules/
+frontend/dist/
+frontend/node_modules/
+*.local
+.vite/
+
+# --- Java / backend ---
+backend/target/
+*.class
+
+# --- IDE / OS ---
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# --- env ---
+.env
+.env.*

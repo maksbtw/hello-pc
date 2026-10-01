@@ -1,0 +1,3 @@
+# Modele 3D są binarne — nie diffować, nie normalizować końców linii
+*.glb binary
+*.gltf binary

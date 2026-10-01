@@ -1,0 +1,15 @@
+{
+  "name": "pc-workshop",
+  "version": "0.0.0",
+  "private": true,
+  "description": "PC Workshop — monorepo (frontend + backend). Szkielet hackathonowy.",
+  "scripts": {
+    "setup": "cd frontend && npm install",
+    "dev": "concurrently -n front,back -c cyan,magenta \"npm:dev:front\" \"npm:dev:back\"",
+    "dev:front": "cd frontend && npm run dev",
+    "dev:back": "cd backend && ./mvnw spring-boot:run"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
