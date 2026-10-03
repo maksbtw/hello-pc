@@ -1,11 +1,9 @@
-// Warstwa danych modeli 3D. Typuje catalog.json + assembly-manifest.json
-// (z public/models/) i daje scenie Explore gotowe wejścia: listę klikalnych
-// części montażu, URL-e modeli, warianty oraz pivoty/bounds do fokusu kamery.
+// Warstwa danych modeli 3D. Czyta catalog.json + assembly-manifest.json
+// SERWOWANE z public/models/ (fetch w runtime — importu z public/ Vite nie
+// wspiera). Daje scenie Explore listę klikalnych części montażu, URL-e modeli,
+// warianty oraz pivoty/bounds do fokusu kamery. Ładowanie przez Suspense.
 import { useGLTF } from '@react-three/drei';
 import type { PartName } from '../data/parts';
-
-import catalogJson from '../../public/models/catalog.json';
-import assemblyJson from '../../public/models/assembly-manifest.json';
 
 type Vec3 = [number, number, number];
 
@@ -39,14 +37,11 @@ export interface AssemblyAsset {
   usage: string;
 }
 
-// Rzut przez unknown: import JSON wnioskuje number[], a my chcemy krotki Vec3.
-const catalog = catalogJson as unknown as { parts: Record<string, CatalogPart> };
-const assembly = assemblyJson as unknown as { assets: Record<string, AssemblyAsset> };
-
-// Klucze w assembly-manifest są po nazwie pliku; indeksujemy po partId.
-const assemblyByPart = new Map<string, AssemblyAsset>();
-for (const asset of Object.values(assembly.assets)) {
-  assemblyByPart.set(asset.partId, asset);
+/** Gotowe dane katalogu dla sceny. */
+export interface CatalogData {
+  parts: Record<string, CatalogPart>;
+  assemblyByPart: Map<string, AssemblyAsset>;
+  assemblyModelUrls: string[];
 }
 
 /** 8 klikalnych części złożonego PC — kolejność „od zewnątrz do środka". */
@@ -64,16 +59,48 @@ export const ASSEMBLY_PARTS: PartName[] = [
 /** Nazwa pliku → ścieżka serwowana z public/. */
 export const modelUrl = (file: string): string => `/models/${file}`;
 
-export function getAssembly(part: PartName): AssemblyAsset | undefined {
-  return assemblyByPart.get(part);
+async function fetchCatalog(): Promise<CatalogData> {
+  const [catalog, assembly] = await Promise.all([
+    fetch('/models/catalog.json').then(
+      (r) => r.json() as Promise<{ parts: Record<string, CatalogPart> }>,
+    ),
+    fetch('/models/assembly-manifest.json').then(
+      (r) => r.json() as Promise<{ assets: Record<string, AssemblyAsset> }>,
+    ),
+  ]);
+
+  // Klucze w assembly-manifest są po nazwie pliku; indeksujemy po partId.
+  const assemblyByPart = new Map<string, AssemblyAsset>();
+  for (const asset of Object.values(assembly.assets)) {
+    assemblyByPart.set(asset.partId, asset);
+  }
+
+  const assemblyModelUrls = ASSEMBLY_PARTS.map((p) => assemblyByPart.get(p)?.file)
+    .filter((f): f is string => Boolean(f))
+    .map(modelUrl);
+
+  for (const url of assemblyModelUrls) useGLTF.preload(url);
+
+  return { parts: catalog.parts, assemblyByPart, assemblyModelUrls };
 }
 
-export function getCatalogPart(part: PartName): CatalogPart | undefined {
-  return catalog.parts[part];
+// Prosty cache z Suspense: useCatalog() rzuca promisem póki dane się ładują.
+let cache: CatalogData | null = null;
+let pending: Promise<CatalogData> | null = null;
+
+export function useCatalog(): CatalogData {
+  if (cache) return cache;
+  if (!pending) {
+    pending = fetchCatalog().then((d) => {
+      cache = d;
+      return d;
+    });
+  }
+  throw pending;
 }
 
-export function getVariants(part: PartName): Variant[] {
-  return catalog.parts[part]?.variants ?? [];
+export function getVariants(data: CatalogData, part: PartName): Variant[] {
+  return data.parts[part]?.variants ?? [];
 }
 
 /** Środek bounding-boxa — target dla OrbitControls / fokusu kamery. */
@@ -86,16 +113,4 @@ export function boundsCenter(a: AssemblyAsset): Vec3 {
 export function boundsSize(a: AssemblyAsset): Vec3 {
   const [min, max] = a.bounds_gltf;
   return [max[0] - min[0], max[1] - min[1], max[2] - min[2]];
-}
-
-/** URL-e 8 modeli montażowych (render sceny + preload). */
-export const assemblyModelUrls: string[] = ASSEMBLY_PARTS.map(
-  (p) => assemblyByPart.get(p)?.file,
-)
-  .filter((f): f is string => Boolean(f))
-  .map(modelUrl);
-
-/** Wczesne wczytanie modeli montażu, zanim scena się zamontuje. */
-export function preloadAssembly(): void {
-  for (const url of assemblyModelUrls) useGLTF.preload(url);
 }

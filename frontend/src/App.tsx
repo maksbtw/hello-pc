@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
+import ExploreScene from './three/ExploreScene';
 
 /**
  * Szkielet aplikacji: bramka szerokości ekranu, tło "lampa" i trasy-placeholdery.
@@ -59,6 +60,21 @@ function Placeholder({ title, owner }: { title: string; owner: string }) {
   );
 }
 
+// --- Eksploracja: scena 3D (Max). Panel boczny dojdzie w kroku 7. ---
+function Explore() {
+  return (
+    <div className="relative h-full w-full">
+      <ExploreScene />
+      <nav className="absolute left-4 top-4 flex gap-4 font-ui text-sm text-accent">
+        <Link to="/">← Start</Link>
+      </nav>
+      <p className="absolute bottom-4 left-1/2 -translate-x-1/2 font-ui text-xs text-text-faint">
+        Przeciągnij, aby obrócić • scroll = zoom
+      </p>
+    </div>
+  );
+}
+
 export default function App() {
   const isDesktop = useIsDesktop();
 
@@ -70,7 +86,7 @@ export default function App() {
       ) : (
         <Routes>
           <Route path="/" element={<Placeholder title="PC Workshop" owner="start: wybór poziomu + 2 przyciski" />} />
-          <Route path="/explore" element={<Placeholder title="Eksploracja" owner="Max: scena 3D + panel boczny" />} />
+          <Route path="/explore" element={<Explore />} />
           <Route path="/simulation" element={<Placeholder title="Symulacja" owner="Anton: pole tekstu, licznik 12 znaków" />} />
           <Route path="/simulation/step/:n" element={<Placeholder title="Krok symulacji" owner="Anton: stepper, karta PRZED→PO" />} />
           <Route path="/simulation/done" element={<Placeholder title="Finał" owner="Anton: ekran końcowy" />} />
