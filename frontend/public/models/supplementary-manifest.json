@@ -158,9 +158,9 @@
         0.001850000087870285,
         0.0
       ],
-      "triangles": 3664,
-      "draw_calls": 4,
-      "bytes": 140128,
+      "triangles": 3928,
+      "draw_calls": 5,
+      "bytes": 155292,
       "variant": "mobile"
     },
     "cpu-server": {
@@ -214,9 +214,9 @@
         0.0020999998960178345,
         0.0
       ],
-      "triangles": 3824,
-      "draw_calls": 6,
-      "bytes": 147360,
+      "triangles": 4088,
+      "draw_calls": 7,
+      "bytes": 162528,
       "variant": "integrated"
     },
     "ram-ddr4": {
@@ -242,9 +242,9 @@
         0.017499999958090484,
         -0.00020000024233013391
       ],
-      "triangles": 5438,
-      "draw_calls": 5,
-      "bytes": 299972,
+      "triangles": 6347,
+      "draw_calls": 7,
+      "bytes": 348676,
       "variant": "ddr4"
     },
     "ram-ddr5": {
@@ -270,9 +270,9 @@
         0.017499999958090484,
         -0.00020000024233013391
       ],
-      "triangles": 5633,
-      "draw_calls": 5,
-      "bytes": 310576,
+      "triangles": 6525,
+      "draw_calls": 7,
+      "bytes": 358868,
       "variant": "ddr5"
     },
     "motherboard-micro-atx": {
@@ -298,9 +298,9 @@
         0.014499999582767487,
         0.0
       ],
-      "triangles": 15283,
-      "draw_calls": 8,
-      "bytes": 814124,
+      "triangles": 15637,
+      "draw_calls": 10,
+      "bytes": 831680,
       "variant": "micro-atx"
     },
     "motherboard-mini-itx": {
@@ -326,9 +326,9 @@
         0.014499999582767487,
         0.0
       ],
-      "triangles": 10381,
-      "draw_calls": 8,
-      "bytes": 548500,
+      "triangles": 10687,
+      "draw_calls": 10,
+      "bytes": 563468,
       "variant": "mini-itx"
     }
   }
