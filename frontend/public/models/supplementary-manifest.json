@@ -1,0 +1,335 @@
+{
+  "units": "metres",
+  "coordinate_system": "glTF Y-up; front=-Z",
+  "note": "Variants are standalone teaching models, not drop-in replacements for the assembled PC.",
+  "assets": {
+    "monitor-ips": {
+      "file": "monitor-ips.glb",
+      "root": "Monitor",
+      "partId": "Monitor",
+      "description": "Generic 24-inch class 16:9 IPS monitor; exterior is illustrative, not a panel cross-section",
+      "usage": "peripheral",
+      "bounds_gltf": [
+        [
+          -0.2750000059604645,
+          0.0,
+          -0.05849999561905861
+        ],
+        [
+          0.2750000059604645,
+          0.4625000059604645,
+          0.1145000010728836
+        ]
+      ],
+      "inspection_pivot": [
+        0.0,
+        0.23125000298023224,
+        0.0280000027269125
+      ],
+      "triangles": 4091,
+      "draw_calls": 9,
+      "bytes": 218324,
+      "variant": "ips",
+      "refresh_rates_hz": [
+        60,
+        144
+      ],
+      "variants_share_geometry": [
+        "ips",
+        "oled",
+        "60hz",
+        "144hz"
+      ]
+    },
+    "monitor-oled": {
+      "file": "monitor-oled.glb",
+      "root": "Monitor",
+      "partId": "Monitor",
+      "description": "Generic 24-inch class 16:9 OLED monitor; exterior is illustrative, not a panel cross-section",
+      "usage": "peripheral",
+      "bounds_gltf": [
+        [
+          -0.2750000059604645,
+          0.0,
+          -0.05849999561905861
+        ],
+        [
+          0.2750000059604645,
+          0.4625000059604645,
+          0.1145000010728836
+        ]
+      ],
+      "inspection_pivot": [
+        0.0,
+        0.23125000298023224,
+        0.0280000027269125
+      ],
+      "triangles": 4091,
+      "draw_calls": 9,
+      "bytes": 218328,
+      "variant": "oled",
+      "refresh_rates_hz": [
+        60,
+        144
+      ],
+      "variants_share_geometry": [
+        "ips",
+        "oled",
+        "60hz",
+        "144hz"
+      ]
+    },
+    "hdd": {
+      "file": "hdd.glb",
+      "root": "SSD",
+      "partId": "SSD",
+      "description": "Illustrative 3.5-inch SATA HDD with open inspection cover, platters and actuator",
+      "usage": "inspection-only",
+      "bounds_gltf": [
+        [
+          -0.05079999938607216,
+          0.0,
+          -0.07725000381469727
+        ],
+        [
+          0.05079999938607216,
+          0.030000001192092896,
+          0.07349999994039536
+        ]
+      ],
+      "inspection_pivot": [
+        0.0,
+        0.015000000596046448,
+        -0.0018750019371509552
+      ],
+      "triangles": 4888,
+      "draw_calls": 6,
+      "bytes": 213688,
+      "variant": "hdd"
+    },
+    "ssd-sata": {
+      "file": "ssd-sata.glb",
+      "root": "SSD",
+      "partId": "SSD",
+      "description": "Generic 2.5-inch SATA solid-state drive",
+      "usage": "inspection-only",
+      "bounds_gltf": [
+        [
+          -0.03492499887943268,
+          0.0,
+          -0.05324999988079071
+        ],
+        [
+          0.03492499887943268,
+          0.007565000094473362,
+          0.05000000074505806
+        ]
+      ],
+      "inspection_pivot": [
+        0.0,
+        0.003782500047236681,
+        -0.0016249995678663254
+      ],
+      "triangles": 1771,
+      "draw_calls": 7,
+      "bytes": 87260,
+      "variant": "sata"
+    },
+    "cpu-mobile": {
+      "file": "cpu-mobile.glb",
+      "root": "CPU",
+      "partId": "CPU",
+      "description": "Generic mobile BGA CPU with exposed silicon",
+      "usage": "inspection-only",
+      "bounds_gltf": [
+        [
+          -0.017999999225139618,
+          -0.0003000000142492354,
+          -0.013500000350177288
+        ],
+        [
+          0.017999999225139618,
+          0.004000000189989805,
+          0.013500000350177288
+        ]
+      ],
+      "inspection_pivot": [
+        0.0,
+        0.001850000087870285,
+        0.0
+      ],
+      "triangles": 3664,
+      "draw_calls": 4,
+      "bytes": 140128,
+      "variant": "mobile"
+    },
+    "cpu-server": {
+      "file": "cpu-server.glb",
+      "root": "CPU",
+      "partId": "CPU",
+      "description": "Generic server CPU package",
+      "usage": "inspection-only",
+      "bounds_gltf": [
+        [
+          -0.03750000149011612,
+          -0.0003000000142492354,
+          -0.028999999165534973
+        ],
+        [
+          0.03750000149011612,
+          0.0071000000461936,
+          0.028999999165534973
+        ]
+      ],
+      "inspection_pivot": [
+        0.0,
+        0.003400000015972182,
+        0.0
+      ],
+      "triangles": 6121,
+      "draw_calls": 4,
+      "bytes": 220524,
+      "variant": "server"
+    },
+    "gpu-integrated": {
+      "file": "gpu-integrated.glb",
+      "root": "GPU",
+      "partId": "GPU",
+      "description": "CPU package cutaway: schematic integrated GPU region",
+      "usage": "inspection-only",
+      "bounds_gltf": [
+        [
+          -0.017999999225139618,
+          -0.0003000000142492354,
+          -0.013500000350177288
+        ],
+        [
+          0.017999999225139618,
+          0.0044999998062849045,
+          0.013500000350177288
+        ]
+      ],
+      "inspection_pivot": [
+        0.0,
+        0.0020999998960178345,
+        0.0
+      ],
+      "triangles": 3824,
+      "draw_calls": 6,
+      "bytes": 147360,
+      "variant": "integrated"
+    },
+    "ram-ddr4": {
+      "file": "ram-ddr4.glb",
+      "root": "RAM",
+      "partId": "RAM",
+      "description": "DDR4 DIMM: schematic contact key and exposed chips; not a socket compatibility template",
+      "usage": "inspection-only",
+      "bounds_gltf": [
+        [
+          -0.06650000065565109,
+          0.0020000000949949026,
+          -0.0031000005546957254
+        ],
+        [
+          0.06650000065565109,
+          0.032999999821186066,
+          0.0027000000700354576
+        ]
+      ],
+      "inspection_pivot": [
+        0.0,
+        0.017499999958090484,
+        -0.00020000024233013391
+      ],
+      "triangles": 5438,
+      "draw_calls": 5,
+      "bytes": 299972,
+      "variant": "ddr4"
+    },
+    "ram-ddr5": {
+      "file": "ram-ddr5.glb",
+      "root": "RAM",
+      "partId": "RAM",
+      "description": "DDR5 DIMM: schematic contact key and exposed chips; not a socket compatibility template",
+      "usage": "inspection-only",
+      "bounds_gltf": [
+        [
+          -0.06650000065565109,
+          0.0020000000949949026,
+          -0.0031000005546957254
+        ],
+        [
+          0.06650000065565109,
+          0.032999999821186066,
+          0.0027000000700354576
+        ]
+      ],
+      "inspection_pivot": [
+        0.0,
+        0.017499999958090484,
+        -0.00020000024233013391
+      ],
+      "triangles": 5633,
+      "draw_calls": 5,
+      "bytes": 310576,
+      "variant": "ddr5"
+    },
+    "motherboard-micro-atx": {
+      "file": "motherboard-micro-atx.glb",
+      "root": "Motherboard",
+      "partId": "Motherboard",
+      "description": "Generic microATX motherboard, separate inspection layout",
+      "usage": "inspection-only",
+      "bounds_gltf": [
+        [
+          -0.12200000137090683,
+          0.0,
+          -0.12200000137090683
+        ],
+        [
+          0.12200000137090683,
+          0.028999999165534973,
+          0.12200000137090683
+        ]
+      ],
+      "inspection_pivot": [
+        0.0,
+        0.014499999582767487,
+        0.0
+      ],
+      "triangles": 15283,
+      "draw_calls": 8,
+      "bytes": 814124,
+      "variant": "micro-atx"
+    },
+    "motherboard-mini-itx": {
+      "file": "motherboard-mini-itx.glb",
+      "root": "Motherboard",
+      "partId": "Motherboard",
+      "description": "Generic Mini-ITX motherboard, separate inspection layout",
+      "usage": "inspection-only",
+      "bounds_gltf": [
+        [
+          -0.08500000089406967,
+          0.0,
+          -0.08500000089406967
+        ],
+        [
+          0.08500000089406967,
+          0.028999999165534973,
+          0.08500000089406967
+        ]
+      ],
+      "inspection_pivot": [
+        0.0,
+        0.014499999582767487,
+        0.0
+      ],
+      "triangles": 10381,
+      "draw_calls": 8,
+      "bytes": 548500,
+      "variant": "mini-itx"
+    }
+  }
+}

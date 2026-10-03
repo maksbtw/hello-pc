@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "units": "metres",
+  "manifests": ["assembly-manifest.json", "supplementary-manifest.json"],
+  "note": "Assembly models retain their original installed positions. Center clones with inspection_pivot for the Demo inspector. Supplementary variants are inspection-only; they do not share the desktop PC's sockets.",
+  "parts": {
+    "CPU": {
+      "partId": "CPU",
+      "assemblyModel": "cpu.glb",
+      "variants": [
+        {"id": "desktop", "label": "Desktopowy", "model": "cpu.glb"},
+        {"id": "mobile", "label": "Laptopowy", "model": "cpu-mobile.glb"},
+        {"id": "server", "label": "Serwerowy", "model": "cpu-server.glb"}
+      ]
+    },
+    "GPU": {
+      "partId": "GPU",
+      "assemblyModel": "gpu.glb",
+      "variants": [
+        {"id": "dedicated", "label": "Dedykowana", "model": "gpu.glb"},
+        {"id": "integrated", "label": "Zintegrowana (iGPU)", "model": "gpu-integrated.glb", "illustration": "Schematic CPU die with a highlighted integrated graphics region; not a separate graphics card."}
+      ]
+    },
+    "RAM": {
+      "partId": "RAM",
+      "assemblyModel": "ram.glb",
+      "variants": [
+        {"id": "ddr4", "label": "DDR4", "model": "ram-ddr4.glb"},
+        {"id": "ddr5", "label": "DDR5", "model": "ram-ddr5.glb"}
+      ]
+    },
+    "SSD": {
+      "partId": "SSD",
+      "assemblyModel": "ssd.glb",
+      "variants": [
+        {"id": "hdd", "label": "HDD", "model": "hdd.glb", "illustration": "Open cover exposes platters and the actuator for teaching."},
+        {"id": "sata", "label": "SSD SATA", "model": "ssd-sata.glb"},
+        {"id": "nvme", "label": "SSD M.2 NVMe", "model": "ssd.glb"}
+      ]
+    },
+    "Motherboard": {
+      "partId": "Motherboard",
+      "assemblyModel": "motherboard.glb",
+      "variants": [
+        {"id": "atx", "label": "ATX", "model": "motherboard.glb"},
+        {"id": "micro-atx", "label": "microATX", "model": "motherboard-micro-atx.glb"},
+        {"id": "mini-itx", "label": "Mini-ITX", "model": "motherboard-mini-itx.glb"}
+      ]
+    },
+    "PSU": {
+      "partId": "PSU",
+      "assemblyModel": "psu.glb",
+      "variants": [{"id": "default", "label": "Zasilacz", "model": "psu.glb"}]
+    },
+    "Case": {
+      "partId": "Case",
+      "assemblyModel": "pc-case.glb",
+      "variants": [{"id": "default", "label": "Obudowa", "model": "pc-case.glb"}]
+    },
+    "Cooler": {
+      "partId": "Cooler",
+      "assemblyModel": "cooler.glb",
+      "variants": [{"id": "default", "label": "Chłodzenie", "model": "cooler.glb"}]
+    },
+    "Monitor": {
+      "partId": "Monitor",
+      "note": "IPS and OLED share an illustrative enclosure. Refresh rate is metadata, not a geometric difference.",
+      "variants": [
+        {"id": "ips-60", "label": "IPS 60 Hz", "model": "monitor-ips.glb", "panel": "IPS", "refreshRateHz": 60},
+        {"id": "ips-144", "label": "IPS 144 Hz", "model": "monitor-ips.glb", "panel": "IPS", "refreshRateHz": 144},
+        {"id": "oled-60", "label": "OLED 60 Hz", "model": "monitor-oled.glb", "panel": "OLED", "refreshRateHz": 60},
+        {"id": "oled-144", "label": "OLED 144 Hz", "model": "monitor-oled.glb", "panel": "OLED", "refreshRateHz": 144}
+      ]
+    }
+  }
+}
