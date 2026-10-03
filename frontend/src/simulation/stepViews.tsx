@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 
 import type {
   MouseStep,
@@ -11,7 +11,7 @@ import type {
 } from '../types/api';
 import { stepMeta, type StepMeta } from '../data/steps';
 import { useAppStore } from '../store/useAppStore';
-import { BinaryCard, CharCard, Chip, FieldLabel, HexByte, NumberCard } from './ui';
+import { BinaryCard, CharCard, HexByte, NumberCard } from './ui';
 
 /** Dedykowane widoki kroków symulacji (wg template'u z Figmy).
  *  Wspólny układ: grafika1 (lewa) + tekst1 (prawa) · duża grafika (środek) · tekst2 (dół, lewa). */
@@ -111,6 +111,113 @@ function BytesIcon() {
   );
 }
 
+function RamIcon() {
+  return (
+    <svg width="26" height="30" viewBox="0 0 26 30" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-text-soft">
+      <rect x="2" y="8" width="22" height="13" rx="1.5" />
+      <line x1="7" y1="11" x2="7" y2="18" />
+      <line x1="11" y1="11" x2="11" y2="18" />
+      <line x1="15" y1="11" x2="15" y2="18" />
+      <line x1="19" y1="11" x2="19" y2="18" />
+      <line x1="6" y1="21" x2="6" y2="24" />
+      <line x1="20" y1="21" x2="20" y2="24" />
+    </svg>
+  );
+}
+
+function AddrIcon() {
+  return (
+    <svg width="26" height="30" viewBox="0 0 26 30" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-text-soft">
+      <rect x="3" y="5" width="20" height="20" rx="2" />
+      <line x1="3" y1="11" x2="23" y2="11" />
+      <line x1="3" y1="17" x2="23" y2="17" />
+      <circle cx="6.5" cy="8" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="6.5" cy="14" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="6.5" cy="20" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function CpuIcon() {
+  return (
+    <svg width="26" height="30" viewBox="0 0 26 30" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-text-soft">
+      <rect x="7" y="9" width="12" height="12" rx="1.5" />
+      <rect x="10.5" y="12.5" width="5" height="5" rx="0.5" />
+      <line x1="10" y1="9" x2="10" y2="6" />
+      <line x1="13" y1="9" x2="13" y2="6" />
+      <line x1="16" y1="9" x2="16" y2="6" />
+      <line x1="10" y1="24" x2="10" y2="21" />
+      <line x1="13" y1="24" x2="13" y2="21" />
+      <line x1="16" y1="24" x2="16" y2="21" />
+      <line x1="7" y1="12" x2="4" y2="12" />
+      <line x1="7" y1="18" x2="4" y2="18" />
+      <line x1="19" y1="12" x2="22" y2="12" />
+      <line x1="19" y1="18" x2="22" y2="18" />
+    </svg>
+  );
+}
+
+function InstrIcon() {
+  return (
+    <svg width="26" height="30" viewBox="0 0 26 30" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-text-soft">
+      <path d="M7 10 l-3 5 l3 5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M19 10 l3 5 l-3 5" strokeLinecap="round" strokeLinejoin="round" />
+      <line x1="14.5" y1="8" x2="11" y2="22" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function GlyphIcon() {
+  return (
+    <svg width="26" height="30" viewBox="0 0 26 30" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-text-soft">
+      <path d="M8 22 L13 8 L18 22" strokeLinecap="round" strokeLinejoin="round" />
+      <line x1="10" y1="17" x2="16" y2="17" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function BitsIcon() {
+  return (
+    <svg width="26" height="30" viewBox="0 0 26 30" fill="none" className="text-text-soft">
+      <text x="3" y="13" fontFamily="monospace" fontSize="9" fill="currentColor">10</text>
+      <text x="14" y="13" fontFamily="monospace" fontSize="9" fill="currentColor">01</text>
+      <text x="3" y="25" fontFamily="monospace" fontSize="9" fill="currentColor">00</text>
+      <text x="14" y="25" fontFamily="monospace" fontSize="9" fill="currentColor">11</text>
+    </svg>
+  );
+}
+
+function PixelIcon() {
+  return (
+    <svg width="26" height="30" viewBox="0 0 26 30" fill="none" stroke="currentColor" strokeWidth="1.3" className="text-text-soft">
+      <rect x="4" y="6" width="18" height="18" rx="1" />
+      <line x1="10" y1="6" x2="10" y2="24" />
+      <line x1="16" y1="6" x2="16" y2="24" />
+      <line x1="4" y1="12" x2="22" y2="12" />
+      <line x1="4" y1="18" x2="22" y2="18" />
+      <rect x="10" y="12" width="6" height="6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function ScreenIcon() {
+  return (
+    <svg width="26" height="30" viewBox="0 0 26 30" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-text-soft">
+      <rect x="3" y="6" width="20" height="14" rx="1.5" />
+      <line x1="10" y1="24" x2="16" y2="24" strokeLinecap="round" />
+      <line x1="13" y1="20" x2="13" y2="24" />
+    </svg>
+  );
+}
+
+function SignalIcon() {
+  return (
+    <svg width="26" height="30" viewBox="0 0 26 30" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-text-soft">
+      <path d="M3 15 h4 l2 -7 l4 14 l3 -10 l2 3 h5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 /** Mała karta kroku w pasku „co się dzieje" (ten sam styl w całej symulacji). */
 function FlowCard({ icon, title, subtitle }: { icon: ReactNode; title: string; subtitle: string }) {
   return (
@@ -165,7 +272,11 @@ export function SsdStepView({ step, meta }: { step: SsdStep; meta: StepMeta }) {
         {chars.map((ch, i) => {
           const bytes = Array.from(enc.encode(ch));
           return (
-            <div key={i} className="flex flex-col items-center gap-3">
+            <div
+              key={i}
+              className="sim-rise flex flex-col items-center gap-3"
+              style={{ animationDelay: `${i * 90}ms` }}
+            >
               <span className="font-heading text-7xl leading-none text-text-bright">
                 {ch === ' ' ? '␣' : ch}
               </span>
@@ -184,30 +295,24 @@ export function SsdStepView({ step, meta }: { step: SsdStep; meta: StepMeta }) {
 }
 
 /* 3 · RAM — tabela Adres | Hex | Dec | Znaczenie, tekst podświetlony zielono */
-export function RamStepView({ step, meta }: { step: RamStep; meta: StepMeta }) {
-  const [hs, he] = step.highlight;
-  const flat: { addr: number; byte: number; gi: number }[] = [];
-  let gi = 0;
-  for (const row of step.rows) {
-    const base = parseInt(row.address.replace('0x', ''), 16) || 0;
-    row.bytes.forEach((b, j) => {
-      flat.push({ addr: base + j, byte: b, gi });
-      gi++;
-    });
-  }
-  const textBytes = flat.filter((f) => f.gi >= hs && f.gi < he).map((f) => f.byte);
+export function RamStepView({ meta }: { step: RamStep; meta: StepMeta }) {
+  // Dane liczymy z wpisanego tekstu (spójnie z krokiem I), a nie z mocka.
+  const text = useAppStore((s) => s.text) || 'Hello';
+  const textBytes = Array.from(new TextEncoder().encode(text));
+  // Wiersze tabeli: bajty tekstu + 2 bajty 0x00 (koniec tekstu) dla kontekstu.
+  const flat = [
+    ...textBytes.map((byte, i) => ({ addr: i, byte, on: true })),
+    { addr: textBytes.length, byte: 0, on: false },
+    { addr: textBytes.length + 1, byte: 0, on: false },
+  ];
 
   const graphic = (
-    <div>
-      <FieldLabel>Bajty z dysku</FieldLabel>
-      <div className="mt-2 flex max-w-[170px] flex-wrap gap-1.5">
-        {textBytes.map((b, i) => (
-          <HexByte key={i} value={b} active />
-        ))}
-      </div>
-      <div className="mt-4">
-        <ArrowDown label="kopiowanie do RAM" />
-      </div>
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      <FlowCard icon={<BytesIcon />} title="bajty z dysku" subtitle={`ciąg ${textBytes.length} liczb`} />
+      <ArrowRight />
+      <FlowCard icon={<RamIcon />} title="kopiowanie do RAM" subtitle="szybka pamięć" />
+      <ArrowRight />
+      <FlowCard icon={<AddrIcon />} title="adresowanie" subtitle="każdy bajt ma adres" />
     </div>
   );
 
@@ -218,19 +323,19 @@ export function RamStepView({ step, meta }: { step: RamStep; meta: StepMeta }) {
         <span className="font-ui text-xs text-text-dim">Hex</span>
         <span className="font-ui text-xs text-text-dim">Dec</span>
         <span className="font-ui text-xs text-text-dim">Znaczenie</span>
-        {flat.map((f) => {
-          const on = f.gi >= hs && f.gi < he;
+        {flat.map((f, i) => {
           const ch = printable(f.byte);
           return (
             <div
-              key={f.gi}
-              className={`col-span-4 grid grid-cols-subgrid items-center rounded ${on ? 'bg-data-text/5' : ''}`}
+              key={f.addr}
+              className={`sim-rise col-span-4 grid grid-cols-subgrid items-center rounded ${f.on ? 'bg-data-text/5' : ''}`}
+              style={{ animationDelay: `${i * 70}ms` }}
             >
-              <span className={on ? 'text-text' : 'text-text-dim'}>{addr8(f.addr)}</span>
-              <span className={on ? 'text-data-text' : 'text-text-dim'}>{hex2(f.byte)}</span>
-              <span className={on ? 'text-data-bytes' : 'text-text-dim'}>{f.byte}</span>
-              <span className={on ? 'text-text-muted' : 'text-text-faint'}>
-                {on && ch ? `„${ch}"` : f.byte === 0 ? 'koniec tekstu' : 'inne dane programu'}
+              <span className={f.on ? 'text-text' : 'text-text-dim'}>{addr8(f.addr)}</span>
+              <span className={f.on ? 'text-data-text' : 'text-text-dim'}>{hex2(f.byte)}</span>
+              <span className={f.on ? 'text-data-bytes' : 'text-text-dim'}>{f.byte}</span>
+              <span className={f.on ? 'text-text-muted' : 'text-text-faint'}>
+                {f.on && ch ? `„${ch}"` : f.byte === 0 ? 'koniec tekstu' : 'inne dane'}
               </span>
             </div>
           );
@@ -240,105 +345,170 @@ export function RamStepView({ step, meta }: { step: RamStep; meta: StepMeta }) {
   );
 }
 
-/* 4 · CPU — kod maszynowy → dekodowanie → instrukcje */
-export function CpuDecodeStepView({ step, meta }: { step: CpuDecodeStep; meta: StepMeta }) {
-  const przed: { b: number; active: boolean }[] = [];
-  step.instructions.forEach((ins, ii) =>
-    ins.bytes.forEach((b) => przed.push({ b, active: ii === step.currentIndex })),
-  );
+/* 4 · CPU — program liczony z tekstu: po jednej instrukcji „wypisz" na znak */
+export function CpuDecodeStepView({ meta }: { step: CpuDecodeStep; meta: StepMeta }) {
+  const text = useAppStore((s) => s.text) || 'Hello';
+  const enc = new TextEncoder();
+  const chars = [...text];
+
+  // Dla każdego znaku: MOV AL, <bajt> (B0 XX) + INT 0x21 (CD 21) — „wypisz znak".
+  const allInstructions = chars.flatMap((ch, i) => {
+    const code = enc.encode(ch)[0];
+    const label = ch === ' ' ? '␣' : ch;
+    return [
+      { addr: i * 4, bytes: [0xb0, code], asm: `MOV AL, '${label}'`, ch: label },
+      { addr: i * 4 + 2, bytes: [0xcd, 0x21], asm: 'INT 0x21', ch: label },
+    ];
+  });
+  // Pokazujemy maksymalnie 6 przykładowych instrukcji (3 na kolumnę).
+  const instructions = allInstructions.slice(0, 6);
+  const more = allInstructions.length - instructions.length;
+  const totalBytes = allInstructions.reduce((n, ins) => n + ins.bytes.length, 0);
+
+  // „Teraz" przesuwa się po instrukcjach — jakby procesor wykonywał je po kolei.
+  const [currentIndex, setCurrentIndex] = useState(0);
+  useEffect(() => {
+    const id = setInterval(
+      () => setCurrentIndex((c) => (c + 1) % instructions.length),
+      1800,
+    );
+    return () => clearInterval(id);
+  }, [instructions.length]);
 
   const graphic = (
-    <div>
-      <FieldLabel>Kod maszynowy w pamięci</FieldLabel>
-      <div className="mt-2 flex max-w-sm flex-wrap gap-1.5">
-        {przed.map((p, i) => (
-          <HexByte key={i} value={p.b} active={p.active} />
-        ))}
-      </div>
-      <div className="mt-4">
-        <ArrowDown label="dekodowanie" />
-      </div>
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      <FlowCard icon={<BytesIcon />} title="kod maszynowy" subtitle={`${totalBytes} bajtów`} />
+      <ArrowRight />
+      <FlowCard icon={<CpuIcon />} title="dekoder" subtitle="rozpoznaje polecenie" />
+      <ArrowRight />
+      <FlowCard icon={<InstrIcon />} title="instrukcja" subtitle={`${allInstructions.length} poleceń`} />
     </div>
   );
 
   return (
     <StepLayout graphic={graphic} meta={meta}>
-      <div className="flex flex-col gap-1.5">
-        {step.instructions.map((ins, i) => {
-          const current = i === step.currentIndex;
+      <div className="w-full max-w-4xl">
+      <div className="columns-2 gap-x-8">
+        {instructions.map((ins, i) => {
+          const current = i === currentIndex;
           return (
             <div
               key={i}
-              className={`flex items-center gap-4 rounded-md border px-3 py-2 ${
-                current ? 'border-data-instructions bg-data-instructions/5' : 'border-transparent'
+              className={`sim-rise mb-2 flex break-inside-avoid items-center gap-3 rounded-md border px-3 py-2.5 transition-all duration-700 ease-in-out ${
+                current
+                  ? 'sim-glow border-data-instructions bg-data-instructions/10'
+                  : 'border-transparent opacity-50'
               }`}
+              style={{ animationDelay: `${i * 60}ms` }}
             >
-              <span className="w-28 font-mono text-sm text-text-soft">{ins.address}</span>
-              <div className="flex gap-1.5">
+              <span className="w-20 shrink-0 font-mono text-sm text-text-soft">
+                0x{ins.addr.toString(16).toUpperCase().padStart(4, '0')}
+              </span>
+              <div className="flex shrink-0 gap-1.5">
                 {ins.bytes.map((b, j) => (
-                  <HexByte key={j} value={b} />
+                  <HexByte key={j} value={b} active={current} size="lg" />
                 ))}
               </div>
               <span className="text-text-dim">→</span>
-              <span className="font-mono text-sm text-data-instructions">{ins.asm}</span>
-              {current && <Chip tone="accent">teraz</Chip>}
+              <span className="flex-1 whitespace-nowrap font-mono text-sm text-data-instructions">
+                {ins.asm}
+              </span>
+              <span
+                className={`inline-flex items-center rounded-pill border border-accent/50 bg-accent/10 px-2.5 py-0.5 font-mono text-xs text-accent transition-opacity duration-700 ease-in-out ${
+                  current ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
+                teraz
+              </span>
             </div>
           );
         })}
+      </div>
+      {more > 0 && (
+        <p className="mt-3 text-center font-mono text-xs text-text-dim">
+          … i jeszcze {more} instrukcji dla pozostałych znaków
+        </p>
+      )}
       </div>
     </StepLayout>
   );
 }
 
 /* 5 · UTF-8 — 3 wyrównane wiersze: Znaki / Liczby / Zapis binarny */
-const CELL = 78;
-const GAP = 8;
+const CELL = 46;
+const GAP = 12;
 
-export function TextEncodeStepView({ step, meta }: { step: TextEncodeStep; meta: StepMeta }) {
+export function TextEncodeStepView({ meta }: { step: TextEncodeStep; meta: StepMeta }) {
   const cellW = (n: number) => n * CELL + (n - 1) * GAP;
+  // Dane z wpisanego tekstu (spójnie z pozostałymi krokami).
+  const text = useAppStore((s) => s.text) || 'Hello';
+  const enc = new TextEncoder();
+  const chars = [...text].map((char) => {
+    const bytes = Array.from(enc.encode(char));
+    return { char, bytes, binary: bytes.map((b) => bin8(b)) };
+  });
+  // Płaska lista bajtów (do wyrównanych wierszy + opóźnień animacji).
+  const flatBytes = chars.flatMap((c) => c.bytes);
 
   const graphic = (
-    <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-text-dim">
-      <span className="text-data-text">znak</span> →<Chip>UTF-8</Chip> →
-      <span className="text-data-bytes">liczba</span> →<span className="text-data-bits">bity</span>
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      <FlowCard icon={<GlyphIcon />} title="znak" subtitle="litera tekstu" />
+      <ArrowRight />
+      <FlowCard icon={<BytesIcon />} title="UTF-8" subtitle="liczba 0–255" />
+      <ArrowRight />
+      <FlowCard icon={<BitsIcon />} title="bity" subtitle="8 zer i jedynek" />
     </div>
   );
 
+  let bi = 0; // indeks bajtu (do stagger animacji)
   return (
     <StepLayout graphic={graphic} meta={meta}>
-      <div className="flex flex-col gap-3">
+      <div className="flex max-w-full flex-col gap-3 overflow-x-auto pb-2">
         <div className="flex items-center" style={{ gap: GAP }}>
-          <span className="w-40 shrink-0 font-ui text-xs text-text-dim">PRZED · Znaki</span>
+          <span className="w-20 shrink-0 font-ui text-xs text-text-dim">Znaki</span>
           <div className="flex" style={{ gap: GAP }}>
-            {step.chars.map((c, i) => (
-              <div key={i} style={{ width: cellW(c.bytes.length) }} className="flex">
+            {chars.map((c, i) => (
+              <div
+                key={i}
+                style={{ width: cellW(c.bytes.length), animationDelay: `${i * 90}ms` }}
+                className="sim-rise flex"
+              >
                 <CharCard char={c.char} />
               </div>
             ))}
           </div>
         </div>
         <div className="flex items-center" style={{ gap: GAP }}>
-          <span className="w-40 shrink-0 font-ui text-xs text-text-dim">UTF-8 · Liczby (dec)</span>
+          <span className="w-20 shrink-0 font-ui text-xs text-text-dim">Liczby (dec)</span>
           <div className="flex" style={{ gap: GAP }}>
-            {step.chars.flatMap((c) =>
-              c.bytes.map((b, j) => (
-                <div key={`${c.char}-${j}`} style={{ width: CELL }}>
-                  <NumberCard dec={b} hex={`0x${hex2(b)}`} />
-                </div>
-              )),
+            {chars.flatMap((c) =>
+              c.bytes.map((b, j) => {
+                const k = bi++;
+                return (
+                  <div
+                    key={`${c.char}-${k}-${j}`}
+                    style={{ width: CELL, animationDelay: `${300 + k * 70}ms` }}
+                    className="sim-pop"
+                  >
+                    <NumberCard dec={b} hex={`0x${hex2(b)}`} />
+                  </div>
+                );
+              }),
             )}
           </div>
         </div>
         <div className="flex items-center" style={{ gap: GAP }}>
-          <span className="w-40 shrink-0 font-ui text-xs text-text-dim">PO · Zapis binarny</span>
+          <span className="w-20 shrink-0 font-ui text-xs text-text-dim">Bity</span>
           <div className="flex" style={{ gap: GAP }}>
-            {step.chars.flatMap((c) =>
-              c.bytes.map((b, j) => (
-                <div key={`${c.char}-b-${j}`} style={{ width: CELL }}>
-                  <BinaryCard bits={c.binary[j] ?? bin8(b)} />
-                </div>
-              )),
-            )}
+            {flatBytes.map((b, k) => (
+              <div
+                key={`b-${k}`}
+                style={{ width: CELL, animationDelay: `${600 + k * 70}ms` }}
+                className="sim-bit"
+              >
+                <BinaryCard bits={bin8(b)} />
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -361,16 +531,12 @@ export function RasterStepView({ step, meta }: { step: RasterStep; meta: StepMet
   }
 
   const graphic = (
-    <div>
-      <FieldLabel>Tekst</FieldLabel>
-      <div className="mt-2 flex max-w-[160px] flex-wrap gap-2">
-        {chars.map((ch, i) => (
-          <CharCard key={i} char={ch} />
-        ))}
-      </div>
-      <div className="mt-4">
-        <ArrowDown label="rasteryzacja" />
-      </div>
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      <FlowCard icon={<GlyphIcon />} title="litery" subtitle={`${chars.length} znaków`} />
+      <ArrowRight />
+      <FlowCard icon={<PixelIcon />} title="rasteryzacja" subtitle="rysowanie z pikseli" />
+      <ArrowRight />
+      <FlowCard icon={<ScreenIcon />} title="piksele" subtitle="1 = zapalony, 0 = zgaszony" />
     </div>
   );
 
@@ -384,10 +550,18 @@ export function RasterStepView({ step, meta }: { step: RasterStep; meta: StepMet
           {step.pixels.flatMap((row, y) =>
             row.map((p, x) => {
               const hi = x === hx && y === hy;
+              const idx = y * step.width + x;
               return (
                 <span
                   key={`${x}-${y}`}
-                  className={`h-3.5 w-3.5 rounded-sm ${hi ? 'bg-accent' : p ? 'bg-text-bright' : 'bg-surface-overlay'}`}
+                  className={`h-3.5 w-3.5 rounded-sm ${
+                    hi
+                      ? 'bg-accent shadow-[0_0_10px_2px_rgba(245,165,36,0.7)]'
+                      : p
+                        ? 'bg-text-bright sim-pop'
+                        : 'bg-surface-overlay'
+                  }`}
+                  style={p ? { animationDelay: `${idx * 10}ms` } : undefined}
                 />
               );
             }),
@@ -408,48 +582,45 @@ export function DisplayStepView({ step, meta }: { step: DisplayStep; meta: StepM
   const text = useAppStore((s) => s.text);
 
   const graphic = (
-    <div>
-      <FieldLabel>Piksele (R G B)</FieldLabel>
-      <div className="mt-2 flex max-w-[220px] flex-wrap gap-2">
-        {step.sample.map((s, i) => (
-          <div
-            key={i}
-            className="flex flex-col items-center gap-1 rounded-md border border-border bg-bg2 p-2"
-          >
-            <span
-              className="h-5 w-10 rounded-sm border border-border"
-              style={{ background: `rgb(${s.rgb[0]}, ${s.rgb[1]}, ${s.rgb[2]})` }}
-            />
-            <span className="font-mono text-xs text-data-bytes">
-              {s.rgb[0]} {s.rgb[1]} {s.rgb[2]}
-            </span>
-          </div>
-        ))}
-      </div>
-      <div className="mt-3 flex items-center gap-3 font-ui text-xs text-text-dim">
-        <span className="flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-sm bg-[#f87171]" /> R
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-sm bg-[#4ade80]" /> G
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-sm bg-[#60a5fa]" /> B
-        </span>
-      </div>
-      <div className="mt-4">
-        <ArrowDown label="wysłanie obrazu" />
-      </div>
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      <FlowCard icon={<PixelIcon />} title="piksele RGB" subtitle="kolor = R + G + B" />
+      <ArrowRight />
+      <FlowCard icon={<SignalIcon />} title="sygnał wideo" subtitle="wysłanie do monitora" />
+      <ArrowRight />
+      <FlowCard icon={<ScreenIcon />} title="ekran" subtitle="zapala piksele" />
     </div>
   );
 
   return (
     <StepLayout graphic={graphic} meta={meta}>
-      <div className="flex flex-col items-center gap-3">
-        <div className="flex h-48 w-80 items-center justify-center rounded-lg border border-border bg-black">
-          <span className="font-mono text-4xl tracking-widest text-text-bright">
-            {text || 'Hello'}
-          </span>
+      <div className="flex flex-col items-center gap-4">
+        {/* próbki kolorów pikseli (R G B) */}
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {step.sample.map((s, i) => (
+            <div
+              key={i}
+              className="sim-rise flex flex-col items-center gap-1 rounded-md border border-border bg-bg2 p-2"
+              style={{ animationDelay: `${i * 90}ms` }}
+            >
+              <span
+                className="h-5 w-10 rounded-sm border border-border"
+                style={{ background: `rgb(${s.rgb[0]}, ${s.rgb[1]}, ${s.rgb[2]})` }}
+              />
+              <span className="font-mono text-xs text-data-bytes">
+                {s.rgb[0]} {s.rgb[1]} {s.rgb[2]}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* monitor „włącza się" — rozbłysk + linia skanująca + świecący tekst */}
+        <div className="relative overflow-hidden rounded-lg border-2 border-border bg-black shadow-[0_0_40px_rgba(96,165,250,0.15)]">
+          <div className="sim-screen-on flex h-48 w-80 items-center justify-center">
+            <span className="sim-screen-text font-mono text-4xl tracking-widest text-text-bright">
+              {text || 'Hello'}
+            </span>
+          </div>
+          <span className="sim-scanline" />
         </div>
         <p className="font-ui text-sm text-text-dim">Gotowe. Twój tekst jest na ekranie.</p>
       </div>

@@ -30,20 +30,24 @@ export function HexByte({
   value,
   active,
   tone = 'blue',
+  size = 'md',
 }: {
   value: number;
   active?: boolean;
   tone?: 'blue' | 'green';
+  size?: 'md' | 'lg';
 }) {
   const hex = value.toString(16).toUpperCase().padStart(2, '0');
   const activeCls =
     tone === 'green'
       ? 'border-data-text bg-data-text/15 text-data-text'
       : 'border-data-bytes bg-data-bytes/15 text-data-bytes';
+  const sizeCls = size === 'lg' ? 'h-10 w-12 text-base' : 'h-8 w-9 text-sm';
   return (
     <span
       className={[
-        'inline-flex h-8 w-9 items-center justify-center rounded border font-mono text-sm',
+        'inline-flex items-center justify-center rounded border font-mono transition-colors duration-700 ease-in-out',
+        sizeCls,
         active ? activeCls : 'border-border text-text-muted',
       ].join(' ')}
     >
@@ -55,7 +59,7 @@ export function HexByte({
 /** Karta liczby (dec + hex) — niebieska. */
 export function NumberCard({ dec, hex }: { dec: number; hex: string }) {
   return (
-    <div className="flex h-16 min-w-[72px] flex-col items-center justify-center rounded-md border border-data-bytes/40 bg-data-bytes/5 px-3">
+    <div className="flex h-16 w-full min-w-0 flex-col items-center justify-center rounded-md border border-data-bytes/40 bg-data-bytes/5 px-1">
       <span className="font-mono text-lg text-data-bytes">{dec}</span>
       <span className="font-mono text-xs text-text-dim">{hex}</span>
     </div>
@@ -65,7 +69,7 @@ export function NumberCard({ dec, hex }: { dec: number; hex: string }) {
 /** Karta znaku — zielona. */
 export function CharCard({ char }: { char: string }) {
   return (
-    <div className="flex h-16 min-w-[72px] items-center justify-center rounded-md border border-data-text/40 bg-data-text/5 font-heading text-2xl text-data-text">
+    <div className="flex h-16 w-full min-w-0 items-center justify-center rounded-md border border-data-text/40 bg-data-text/5 font-heading text-2xl text-data-text">
       {char === ' ' ? '␣' : char}
     </div>
   );
@@ -74,7 +78,7 @@ export function CharCard({ char }: { char: string }) {
 /** Karta zapisu binarnego — fioletowa. */
 export function BinaryCard({ bits }: { bits: string }) {
   return (
-    <div className="flex h-11 min-w-[72px] items-center justify-center rounded-md border border-data-bits/40 bg-data-bits/5 px-3 font-mono text-sm text-data-bits">
+    <div className="flex h-10 w-full min-w-0 items-center justify-center rounded-md border border-data-bits/40 bg-data-bits/5 px-0.5 font-mono text-[10px] leading-none tracking-tight text-data-bits">
       {bits}
     </div>
   );
