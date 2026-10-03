@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 
+import SimulationEntry from './simulation/SimulationEntry';
+import SimulationStep from './simulation/SimulationStep';
+import SimulationDone from './simulation/SimulationDone';
+
 /**
  * Szkielet aplikacji: bramka szerokości ekranu, tło "lampa" i trasy-placeholdery.
  * Każdy członek zespołu rozbudowuje swoją część — tu jest tylko miejsce startowe.
@@ -71,9 +75,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Placeholder title="PC Workshop" owner="start: wybór poziomu + 2 przyciski" />} />
           <Route path="/explore" element={<Placeholder title="Eksploracja" owner="Max: scena 3D + panel boczny" />} />
-          <Route path="/simulation" element={<Placeholder title="Symulacja" owner="Anton: pole tekstu, licznik 12 znaków" />} />
-          <Route path="/simulation/step/:n" element={<Placeholder title="Krok symulacji" owner="Anton: stepper, karta PRZED→PO" />} />
-          <Route path="/simulation/done" element={<Placeholder title="Finał" owner="Anton: ekran końcowy" />} />
+          <Route path="/simulation" element={<SimulationEntry />} />
+          <Route path="/simulation/step/:n" element={<SimulationStep />} />
+          <Route path="/simulation/done" element={<SimulationDone />} />
           <Route path="*" element={<Placeholder title="404" owner="nieznana trasa" />} />
         </Routes>
       )}
