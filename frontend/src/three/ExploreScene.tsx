@@ -17,8 +17,7 @@ import type { PartName } from '../data/parts';
 // Kolor podświetlenia = token --accent z design systemu.
 const HIGHLIGHT_COLOR = '#F5A524';
 
-// Domyślna pozycja kamery (widok całego PC). Lustro dla <Canvas camera>.
-const DEFAULT_CAM: [number, number, number] = [0.55, 0.45, 0.75];
+// Dystans kamery w widoku całego PC.
 const DEFAULT_VIEW_DISTANCE = 1.0;
 
 // Pożądana orientacja kamery po wyborze części (Euler w stopniach).
@@ -250,21 +249,12 @@ function CameraRig() {
       distance = DEFAULT_VIEW_DISTANCE;
     }
 
-    // Pozycja docelowa kamery.
-    let camDest: THREE.Vector3;
-    if (selectedPart) {
-      // Stała orientacja po wyborze: Euler SELECT_EULER. Kierunek patrzenia =
-      // lokalne -Z obrócone tym Eulerem; kamerę stawiamy po przeciwnej stronie
-      // targetu, OrbitControls (lookAt + up=+Y) odtworzy ten sam kąt.
-      const forward = new THREE.Vector3(0, 0, -1).applyEuler(SELECT_EULER);
-      camDest = targetVec.clone().addScaledVector(forward, -distance);
-    } else {
-      // Widok całego PC: zachowaj bieżący kąt orbity (ujęcie 3/4).
-      const dir = new THREE.Vector3().subVectors(camera.position, controls.target);
-      if (dir.lengthSq() < 1e-8) dir.set(...DEFAULT_CAM);
-      dir.normalize();
-      camDest = targetVec.clone().addScaledVector(dir, distance);
-    }
+    // Pozycja docelowa kamery — zawsze wyrównana do SELECT_EULER (tak samo przy
+    // wyborze i przy wycofaniu zaznaczenia). Kierunek = lokalne -Z obrócone
+    // Eulerem; kamerę stawiamy po przeciwnej stronie targetu, OrbitControls
+    // (lookAt + up=+Y) odtwarza ten sam kąt.
+    const forward = new THREE.Vector3(0, 0, -1).applyEuler(SELECT_EULER);
+    const camDest = targetVec.clone().addScaledVector(forward, -distance);
 
     tween.current?.kill();
     const s = {
@@ -334,6 +324,8 @@ export default function ExploreScene() {
         enablePan={false}
         minDistance={0.1}
         maxDistance={2.5}
+        // 135° = poziom (90°) + 45° z dołu. Góra bez ograniczeń.
+        maxPolarAngle={(3 * Math.PI) / 4}
       />
     </Canvas>
   );
