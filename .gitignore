@@ -25,3 +25,6 @@ assets/
 
 # Claude Code local config
 .claude/
+
+# --- Editor temporary files ---
+*.swp
