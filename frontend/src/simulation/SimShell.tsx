@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 
+import { FALLBACK_BANNER } from '../api/client';
 import { stepMeta, type StepMeta } from '../data/steps';
 import { useAppStore } from '../store/useAppStore';
 import { ComponentIcon } from './ui';
@@ -199,6 +200,7 @@ export default function SimShell({
   children,
 }: Props) {
   const text = useAppStore((s) => s.text);
+  const usedFallback = useAppStore((s) => s.usedFallback);
 
   // Kierunek przejścia: dalej → wjazd z prawej, wstecz → z lewej.
   const prevIndexRef = useRef(index);
@@ -214,6 +216,13 @@ export default function SimShell({
 
       <EdgeArrow dir="left" onClick={onPrev} label="Poprzedni krok" disabled={index === 1} />
       <EdgeArrow dir="right" onClick={onNext} label="Następny krok" disabled={index === total} />
+
+      {usedFallback && (
+        <div className="mx-16 flex items-center gap-2 rounded-md border border-state-warning/40 bg-state-warning/10 px-4 py-2 font-ui text-sm text-state-warning">
+          <span aria-hidden>⚠</span>
+          <span>{FALLBACK_BANNER}</span>
+        </div>
+      )}
 
       <div
         key={index}

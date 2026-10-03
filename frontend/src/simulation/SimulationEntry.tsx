@@ -25,6 +25,7 @@ export default function SimulationEntry() {
   const setResponse = useAppStore((s) => s.setResponse);
   const setText = useAppStore((s) => s.setText);
   const setCurrentStep = useAppStore((s) => s.setCurrentStep);
+  const setUsedFallback = useAppStore((s) => s.setUsedFallback);
 
   const [value, setValue] = useState('');
   const [status, setStatus] = useState<LampStatus>('idle');
@@ -47,10 +48,11 @@ export default function SimulationEntry() {
     setStatus('off');
     const t0 = Date.now();
 
-    const { data } = await postSimulation(value);
+    const { data, usedFallback } = await postSimulation(value);
     setText(value);
     setResponse(data);
     setCurrentStep(1);
+    setUsedFallback(usedFallback);
 
     // Trzymaj zgaszone min. OFF_MS, potem zapal i po ON_MS wejdź w krok 1.
     const wait = Math.max(0, OFF_MS - (Date.now() - t0));
