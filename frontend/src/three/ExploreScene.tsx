@@ -8,14 +8,19 @@ import {
   ASSEMBLY_PARTS,
   boundsCenter,
   boundsSize,
+  getVariantModels,
   modelUrl,
   useCatalog,
+  variantRowLayout,
 } from './catalog';
+import type { VariantModel } from './catalog';
 import { useAppStore } from '../store/useAppStore';
 import type { PartName } from '../data/parts';
 
 // Kolor podświetlenia = token --accent z design systemu.
 const HIGHLIGHT_COLOR = '#F5A524';
+// Siła emissive dla zaznaczonego/wyróżnionego (niższa = subtelniejsze oznaczenie).
+const HIGHLIGHT_SELECTED = 0.16;
 
 // Dystans kamery w widoku całego PC.
 const DEFAULT_VIEW_DISTANCE = 1.0;
@@ -56,15 +61,21 @@ interface AssemblyPartProps {
   part: PartName;
   url: string;
   hovered: boolean;
+  /** Część ma ≥2 modele wariantów → po wyborze ukrywamy ją (pokaże je rząd). */
+  hasVariants: boolean;
   onHover: (part: PartName) => void;
   onUnhover: () => void;
 }
 
-function AssemblyPart({ part, url, hovered, onHover, onUnhover }: AssemblyPartProps) {
+function AssemblyPart({ part, url, hovered, hasVariants, onHover, onUnhover }: AssemblyPartProps) {
   const { scene } = useGLTF(url);
   const setSelectedPart = useAppStore((s) => s.setSelectedPart);
   const isSelected = useAppStore((s) => s.selectedPart === part);
   const anySelected = useAppStore((s) => s.selectedPart !== null);
+
+  // Wybrana część z wariantami jest ukrywana jak reszta (zamiast wysuwana) —
+  // jej odmiany pokaże VariantRow. Bez wariantów → wysuwa się i świeci jak dotąd.
+  const showExtracted = isSelected && !hasVariants;
 
   const groupRef = useRef<THREE.Group>(null);
   const emisRef = useRef(0); // bieżąca siła emissive
@@ -105,9 +116,9 @@ function AssemblyPart({ part, url, hovered, onHover, onUnhover }: AssemblyPartPr
   // Cele wg stanu. Hover-glow tylko poza trybem wyboru. Wysunięcie: wybrana
   // część jedzie w X (obudowa w przeciwną stronę). Niezaznaczone, gdy coś jest
   // wybrane → opacity 0 (i potem przestają się renderować).
-  emisTargetRef.current = isSelected ? 0.6 : hovered && !anySelected ? 0.22 : 0;
-  opacityTargetRef.current = anySelected && !isSelected ? 0 : 1;
-  offsetTargetRef.current = extractOffsetX(part, isSelected);
+  emisTargetRef.current = showExtracted ? HIGHLIGHT_SELECTED : hovered && !anySelected ? 0.22 : 0;
+  opacityTargetRef.current = !anySelected || showExtracted ? 1 : 0;
+  offsetTargetRef.current = extractOffsetX(part, showExtracted);
 
   // Płynne dochodzenie emissive + opacity + pozycji (damp, niezależne od FPS).
   useFrame((_, delta) => {
@@ -138,6 +149,7 @@ function AssemblyPart({ part, url, hovered, onHover, onUnhover }: AssemblyPartPr
       ref={groupRef}
       onClick={(e) => {
         e.stopPropagation();
+        if (e.delta > 5) return; // to był drag (obrót), nie klik
         // Brak wyboru → wybierz tę część. W trybie wyboru klik w cokolwiek poza
         // wybraną (nawet w wysunięty inny komponent) → odznacz bieżącą.
         if (!anySelected) setSelectedPart(part);
@@ -203,11 +215,127 @@ function AssembledPC() {
             part={part}
             url={modelUrl(asset.file)}
             hovered={hoveredPart === part}
+            hasVariants={getVariantModels(data, part).length >= 2}
             onHover={onHover}
             onUnhover={onUnhover}
           />
         );
       })}
+    </>
+  );
+}
+
+// --- Rząd wariantów: modele odmian wybranej części, obok siebie wzdłuż Z. ---
+
+function VariantInspectModel({
+  model,
+  z,
+  y,
+  focused,
+}: {
+  model: VariantModel;
+  z: number;
+  y: number;
+  focused: boolean;
+}) {
+  const { scene } = useGLTF(modelUrl(model.file));
+  const setFocusedVariant = useAppStore((s) => s.setFocusedVariant);
+  const [hovered, setHovered] = useState(false);
+  const emisRef = useRef(0);
+  const emisTargetRef = useRef(0);
+
+  const { object, materials } = useMemo(() => {
+    const object = scene.clone(true);
+    const materials: THREE.MeshStandardMaterial[] = [];
+    object.traverse((o) => {
+      const mesh = o as THREE.Mesh;
+      if (!mesh.isMesh || !mesh.material) return;
+      const cloneOne = (m: THREE.Material) => {
+        const c = m.clone();
+        if ('emissive' in c) {
+          const sm = c as THREE.MeshStandardMaterial;
+          sm.emissive.set(HIGHLIGHT_COLOR);
+          sm.emissiveIntensity = 0;
+          materials.push(sm);
+        }
+        return c;
+      };
+      mesh.material = Array.isArray(mesh.material)
+        ? mesh.material.map(cloneOne)
+        : cloneOne(mesh.material);
+    });
+    return { object, materials };
+  }, [scene]);
+
+  emisTargetRef.current = focused ? HIGHLIGHT_SELECTED : hovered ? 0.22 : 0;
+  useFrame((_, delta) => {
+    const emis = THREE.MathUtils.damp(emisRef.current, emisTargetRef.current, 12, delta);
+    if (Math.abs(emis - emisRef.current) < 0.0005) return;
+    emisRef.current = emis;
+    for (const m of materials) m.emissiveIntensity = emis;
+  });
+
+  const [px, py, pz] = model.pivot;
+  const labelY = model.bounds[0][1] - py - 0.03; // tuż pod modelem
+
+  return (
+    <group
+      position={[0, y, z]}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (e.delta > 5) return; // drag (obrót), nie klik
+        setFocusedVariant(model.id);
+      }}
+      onPointerOver={(e) => {
+        e.stopPropagation();
+        setHovered(true);
+        document.body.style.cursor = 'pointer';
+      }}
+      onPointerOut={() => {
+        setHovered(false);
+        document.body.style.cursor = 'default';
+      }}
+    >
+      {/* Wycentrowanie modelu: pivot inspekcji w origin grupy (README). */}
+      <group position={[-px, -py, -pz]}>
+        <primitive object={object} />
+      </group>
+      <Html center position={[0, labelY, 0]} distanceFactor={1.2} pointerEvents="none">
+        <div
+          className={`whitespace-nowrap rounded-md border px-2 py-0.5 font-ui text-xs ${
+            focused
+              ? 'border-accent bg-accent text-bg'
+              : 'border-border bg-panel/85 text-text-muted'
+          }`}
+        >
+          {model.label}
+        </div>
+      </Html>
+    </group>
+  );
+}
+
+function VariantRow() {
+  const data = useCatalog();
+  const selectedPart = useAppStore((s) => s.selectedPart);
+  const focusedVariant = useAppStore((s) => s.focusedVariant);
+  const layout = selectedPart ? variantRowLayout(data, selectedPart) : null;
+  if (!layout) return null;
+
+  // Brak jawnego wyboru → pierwszy wariant traktujemy jako domyślnie wyróżniony.
+  const focusId = focusedVariant ?? layout.models[0]?.id;
+
+  return (
+    <>
+      {layout.models.map((m, i) => (
+        <VariantInspectModel
+          key={m.file}
+          model={m}
+          z={layout.positionsZ[i]}
+          y={layout.y}
+          focused={m.id === focusId}
+        />
+      ))}
     </>
   );
 }
@@ -234,16 +362,26 @@ function CameraRig() {
     let distance: number;
 
     if (selectedPart) {
-      const asset = data.assemblyByPart.get(selectedPart);
-      if (!asset) return;
-      // Target na WYSUNIĘTEJ pozycji części (środek + offset X), żeby środek
-      // obracania był na wyciągniętym komponencie, nie na obudowie.
-      const [cx, cy, cz] = boundsCenter(asset);
-      targetVec = new THREE.Vector3(cx + extractOffsetX(selectedPart, true), cy, cz);
-      const [sx, sy, sz] = boundsSize(asset);
-      const radius = 0.5 * Math.max(sx, sy, sz, 0.02);
-      const fov = THREE.MathUtils.degToRad(camera.fov);
-      distance = Math.max((radius / Math.sin(fov / 2)) * 1.6, 0.12);
+      const layout = variantRowLayout(data, selectedPart);
+      if (layout) {
+        // Część z wariantami → kadrujemy cały rząd (rozpiętość wzdłuż Z = poziom).
+        targetVec = new THREE.Vector3(0, layout.y, 0);
+        const vfov = THREE.MathUtils.degToRad(camera.fov);
+        const aspect = camera.aspect || 1;
+        const fitV = layout.maxHeight / 2 / Math.tan(vfov / 2);
+        const fitH = layout.rowDepth / 2 / (Math.tan(vfov / 2) * aspect);
+        distance = Math.max(fitV, fitH, 0.12) * 1.3;
+      } else {
+        const asset = data.assemblyByPart.get(selectedPart);
+        if (!asset) return;
+        // Target na WYSUNIĘTEJ pozycji części (środek + offset X).
+        const [cx, cy, cz] = boundsCenter(asset);
+        targetVec = new THREE.Vector3(cx + extractOffsetX(selectedPart, true), cy, cz);
+        const [sx, sy, sz] = boundsSize(asset);
+        const radius = 0.5 * Math.max(sx, sy, sz, 0.02);
+        const fov = THREE.MathUtils.degToRad(camera.fov);
+        distance = Math.max((radius / Math.sin(fov / 2)) * 1.6, 0.12);
+      }
     } else {
       targetVec = new THREE.Vector3(...SCENE_TARGET);
       distance = DEFAULT_VIEW_DISTANCE;
@@ -291,12 +429,28 @@ function CameraRig() {
 
 export default function ExploreScene() {
   const setSelectedPart = useAppStore((s) => s.setSelectedPart);
+  // Pozycja wciśnięcia LPM — do odróżnienia KLIKU od DRAG-a (obrotu).
+  const downPos = useRef<{ x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    const onDown = (e: PointerEvent) => {
+      downPos.current = { x: e.clientX, y: e.clientY };
+    };
+    window.addEventListener('pointerdown', onDown);
+    return () => window.removeEventListener('pointerdown', onDown);
+  }, []);
+
   return (
     <Canvas
       camera={{ position: [0.55, 0.45, 0.75], fov: 45, near: 0.01 }}
       dpr={[1, 2]}
-      // Klik w tło (poza modelem) = odznaczenie.
-      onPointerMissed={() => setSelectedPart(null)}
+      // Odznaczenie tylko na KLIK poza modelem — nie po puszczeniu drag-a
+      // (obrót kończący się poza sprzętem nie ma odznaczać).
+      onPointerMissed={(e) => {
+        const d = downPos.current;
+        const moved = d ? Math.hypot(e.clientX - d.x, e.clientY - d.y) : 0;
+        if (moved < 6) setSelectedPart(null);
+      }}
     >
       {/* Oświetlenie (offline, bez HDRI). Materiały PBR bez env-mapy są ciemne,
           więc świecimy z kilku stron. Ciepły fill = motyw „lampa". */}
@@ -308,6 +462,10 @@ export default function ExploreScene() {
       <Suspense fallback={<LoadingScreen />}>
         <AssembledPC />
         <CameraRig />
+        {/* Rząd wariantów ładuje się leniwie — własny Suspense, by nie migać sceną. */}
+        <Suspense fallback={null}>
+          <VariantRow />
+        </Suspense>
         <ContactShadows
           position={[0, 0, 0]}
           opacity={0.45}
