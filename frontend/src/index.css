@@ -2,26 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Tokeny stylu jako zmienne CSS (ciemny motyw). Lustro dla tailwind.config.ts. */
+/* Design system (ciemny motyw) z Figmy — sekcja "design system".
+   Lustro dla tailwind.config.ts. Używaj poza Tailwindem: var(--accent) itd. */
 :root {
+  /* Tła / powierzchnie */
   --bg: #0b0d10;
+  --bg-2: #0f1216;
   --panel: #13161b;
-  --border: #232832;
   --surface: #1a1e25;
-  --text: #e8eaed;
-  --text-muted: #9aa3ae;
-  --text-faint: #5f6873;
-  --lamp: #ffd9a0;
-  --accent: #f5a524;
+  --surface-raised: #222731;
+  --surface-overlay: #262c35;
 
+  /* Obramowania */
+  --border: #232832;
+  --border-subtle: #2a2f37;
+  --border-strong: #343b47;
+
+  /* Tekst */
+  --text: #e8eaed;
+  --text-bright: #f5f4ef;
+  --text-soft: #c9ced6;
+  --text-muted: #9aa3ae;
+  --text-dim: #7a8490;
+  --text-faint: #5f6873;
+
+  /* Akcent (pomarańcz) */
+  --accent: #f5a524;
+  --accent-hover: #d98e14;
+  --accent-bright: #ffb547;
+  --accent-tint: #ffd9a0;
+  --accent-soft: #ffe7c2;
+  --accent-subtle: #17110a;
+  --lamp: #ffd9a0;
+
+  /* Dane w symulacji */
   --data-text: #4ade80;
   --data-bytes: #60a5fa;
   --data-bits: #a78bfa;
   --data-instructions: #f472b6;
 
+  /* Stany */
   --state-success: #4ade80;
+  --state-info: #60a5fa;
   --state-warning: #fbbf24;
   --state-error: #f87171;
+  --state-error-strong: #ff4d4d;
+
+  /* Promienie zaokrągleń */
+  --radius-sm: 3px;
+  --radius: 4px;
+  --radius-md: 7px;
+  --radius-lg: 15px;
+  --radius-pill: 999px;
+
+  /* Rodziny czcionek */
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-ui: Inter, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
 html,
@@ -34,5 +71,5 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: Inter, sans-serif;
+  font-family: var(--font-ui);
 }
