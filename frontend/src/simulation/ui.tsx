@@ -25,16 +25,26 @@ export function Chip({ children, tone = 'neutral' }: { children: ReactNode; tone
   );
 }
 
-/** Mała komórka bajtu w hex (SSD/RAM/CPU). */
-export function HexByte({ value, active }: { value: number; active?: boolean }) {
+/** Mała komórka bajtu w hex (SSD/RAM/CPU). tone: niebieski (bajty) lub zielony (tekst). */
+export function HexByte({
+  value,
+  active,
+  tone = 'blue',
+}: {
+  value: number;
+  active?: boolean;
+  tone?: 'blue' | 'green';
+}) {
   const hex = value.toString(16).toUpperCase().padStart(2, '0');
+  const activeCls =
+    tone === 'green'
+      ? 'border-data-text bg-data-text/15 text-data-text'
+      : 'border-data-bytes bg-data-bytes/15 text-data-bytes';
   return (
     <span
       className={[
         'inline-flex h-8 w-9 items-center justify-center rounded border font-mono text-sm',
-        active
-          ? 'border-data-bytes bg-data-bytes/15 text-data-bytes'
-          : 'border-border text-text-muted',
+        active ? activeCls : 'border-border text-text-muted',
       ].join(' ')}
     >
       {hex}

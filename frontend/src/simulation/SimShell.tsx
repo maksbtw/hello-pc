@@ -1,6 +1,7 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 
 import { FALLBACK_BANNER } from '../api/client';
+import { parts } from '../data/parts';
 import { stepMeta, type IconKey, type StepMeta } from '../data/steps';
 import { useAppStore } from '../store/useAppStore';
 import Scene from '../three/Scene';
@@ -78,35 +79,6 @@ function EdgeArrow({
   );
 }
 
-function NeighborStep({
-  meta,
-  side,
-  onClick,
-}: {
-  meta: StepMeta;
-  side: 'prev' | 'next';
-  onClick: () => void;
-}) {
-  const isPrev = side === 'prev';
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`group max-w-[170px] text-text-dim transition-colors hover:text-text-muted ${
-        isPrev ? 'text-right' : 'text-left'
-      }`}
-    >
-      <div className="truncate font-ui text-sm">{meta.title}</div>
-      <div
-        className={`flex items-center gap-1.5 font-mono text-sm ${isPrev ? 'justify-end' : 'justify-start'}`}
-      >
-        <ComponentIcon icon={meta.icon} className="h-4 w-4" />
-        {meta.component}
-      </div>
-    </button>
-  );
-}
-
 function StepDots({ index, total }: { index: number; total: number }) {
   return (
     <div className="flex items-center gap-1.5">
@@ -126,45 +98,55 @@ function StepDots({ index, total }: { index: number; total: number }) {
   );
 }
 
-function StepRail({
-  index,
-  onSelect,
-  back,
-}: {
-  index: number;
-  onSelect: (n: number) => void;
-  back: boolean;
-}) {
+// Szerokość slotu karuzeli kroków (px).
+const SLOT = 380;
+
+function StepRail({ index, onSelect }: { index: number; onSelect: (n: number) => void }) {
   const total = stepMeta.length;
-  const prev = index > 1 ? stepMeta[index - 2] : null;
-  const curr = stepMeta[index - 1];
-  const next = index < total ? stepMeta[index] : null;
+  const active = index - 1; // 0-based
 
   return (
-    <div className="flex items-center justify-center gap-10 px-10 py-5">
-      <div className="flex w-[170px] justify-end">
-        {prev && <NeighborStep meta={prev} side="prev" onClick={() => onSelect(index - 1)} />}
-      </div>
+    <div className="flex flex-col items-center py-5">
+      <StepDots index={index} total={total} />
 
-      <div className="flex flex-col items-center text-center">
-        {/* kropki — statyczne, bez animacji (aktywna linia tylko zmienia pozycję) */}
-        <StepDots index={index} total={total} />
-
-        {/* tytuł — wsuwa się z boku, bez zmiany przezroczystości */}
+      {/* Karuzela: cały tor przesuwa się tak, by bieżący krok był na środku.
+          Sąsiednie tytuły płynnie wjeżdżają/zjeżdżają i zmieniają skalę. */}
+      <div className="relative mt-3 h-[76px] w-full overflow-hidden">
         <div
-          key={index}
-          className={`mt-3 flex flex-col items-center ${back ? 'sim-title-slide sim-title-slide--back' : 'sim-title-slide'}`}
+          className="absolute left-1/2 top-0 flex transition-transform duration-500 ease-out"
+          style={{ transform: `translateX(${-(active * SLOT + SLOT / 2)}px)` }}
         >
-          <h2 className="font-heading text-3xl text-text-bright">{curr.title}</h2>
-          <span className="mt-2 flex items-center gap-1.5 font-mono text-base text-text-muted">
-            <ComponentIcon icon={curr.icon} className="h-4 w-4" />
-            {curr.component}
-          </span>
+          {stepMeta.map((m, i) => {
+            const isActive = i === active;
+            const dist = Math.abs(i - active);
+            return (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => onSelect(i + 1)}
+                style={{ width: SLOT, zIndex: isActive ? 2 : 1 }}
+                className="flex shrink-0 flex-col items-center"
+                aria-current={isActive ? 'step' : undefined}
+              >
+                <div
+                  className="flex flex-col items-center transition-all duration-500 ease-out"
+                  style={{
+                    transform: `scale(${isActive ? 1 : 0.5})`,
+                    opacity: dist > 1 ? 0 : isActive ? 1 : 0.55,
+                  }}
+                >
+                  <h2 className="whitespace-nowrap font-heading text-3xl text-text-bright">
+                    {m.title}
+                  </h2>
+                  <span className="mt-1 flex items-center gap-1.5 font-mono text-base text-text-muted">
+                    <ComponentIcon icon={m.icon} className="h-4 w-4" />
+                    {m.component}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
         </div>
-      </div>
-
-      <div className="flex w-[170px] justify-start">
-        {next && <NeighborStep meta={next} side="next" onClick={() => onSelect(index + 1)} />}
       </div>
     </div>
   );
@@ -195,7 +177,7 @@ export default function SimShell({
   return (
     <div className="relative flex h-full flex-col">
       <TopBar />
-      <StepRail index={index} onSelect={onSelect} back={back} />
+      <StepRail index={index} onSelect={onSelect} />
 
       <EdgeArrow dir="left" onClick={onPrev} label="Poprzedni krok" disabled={index === 1} />
       <EdgeArrow dir="right" onClick={onNext} label="Następny krok" disabled={index === total} />
@@ -214,34 +196,26 @@ export default function SimShell({
             key={index}
             className={`flex flex-1 flex-col ${back ? 'sim-step-enter sim-step-enter--back' : 'sim-step-enter'}`}
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="font-mono text-xs uppercase tracking-upper text-text-dim">
-                  Krok {index} z {total} · {meta.component}
-                </p>
-                <h1 className="mt-1 font-heading text-2xl text-text-bright">{meta.title}</h1>
-              </div>
-              {text && (
+            {text && (
+              <div className="flex justify-end">
                 <span className="rounded-md border border-border bg-bg2 px-3 py-1.5 font-mono text-sm text-text-muted">
                   tekst: <span className="text-data-text">„{text}"</span>
                 </span>
-              )}
-            </div>
-            <div className="mt-8 flex-1">{children}</div>
+              </div>
+            )}
+            <p className="mt-1 max-w-3xl font-ui text-base text-text-muted">{meta.description}</p>
+            <div className="mt-6 flex-1">{children}</div>
           </div>
         </section>
 
         {/* prawa kolumna: model 3D (bez ramki, obracalny) + sam tekst na dole */}
         <aside className="flex min-h-0 flex-col">
-          <div className="relative min-h-0 flex-1">
-            <span className="absolute left-0 top-0 z-10 inline-flex items-center rounded-pill border border-accent/50 bg-accent/10 px-2.5 py-0.5 font-mono text-xs text-accent">
-              Tu się to dzieje
-            </span>
+          <div className="min-h-0 flex-1">
             <Scene modelUrl={`/models/${STEP_MODEL[meta.icon]}`} />
           </div>
           <div className="mt-4">
-            <h2 className="font-heading text-lg text-text-bright">{meta.title}</h2>
-            <p className="mt-2 font-ui text-base text-text-muted">{meta.description}</p>
+            <h2 className="font-heading text-lg text-text-bright">{meta.stageLabel}</h2>
+            <p className="mt-2 font-ui text-base text-text-muted">{parts[meta.part].tagline}</p>
           </div>
         </aside>
       </div>
