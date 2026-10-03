@@ -14,6 +14,7 @@ backend/target/
 .vscode/
 *.iml
 .DS_Store
+.mcp.json
 
 # --- env ---
 .env
