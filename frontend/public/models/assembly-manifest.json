@@ -1,0 +1,243 @@
+{
+  "units": "metres",
+  "coordinate_system": "glTF Y-up; +X=open side; -Z=front",
+  "default_transform": {
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  "ram": {
+    "installed_slot": "A2",
+    "offsets_for_additional_slots_gltf": {
+      "A1": [
+        0,
+        0,
+        0.011
+      ],
+      "B1": [
+        0,
+        0,
+        -0.011
+      ],
+      "B2": [
+        0,
+        0,
+        -0.022
+      ]
+    }
+  },
+  "assets": {
+    "pc-case": {
+      "file": "pc-case.glb",
+      "root": "Case",
+      "inspection_pivot": [
+        0.0,
+        0.23,
+        0.0
+      ],
+      "triangles": 8980,
+      "draw_calls": 7,
+      "bounds_gltf": [
+        [
+          -0.11500000208616257,
+          0.0,
+          -0.23000000417232513
+        ],
+        [
+          0.11500000208616257,
+          0.45799997448921204,
+          0.23000000417232513
+        ]
+      ],
+      "partId": "Case",
+      "usage": "assembly"
+    },
+    "motherboard": {
+      "file": "motherboard.glb",
+      "root": "Motherboard",
+      "inspection_pivot": [
+        -0.083,
+        0.2845,
+        0.085
+      ],
+      "triangles": 14036,
+      "draw_calls": 7,
+      "bounds_gltf": [
+        [
+          -0.09149999916553497,
+          0.13199999928474426,
+          -0.03700000047683716
+        ],
+        [
+          -0.02199999988079071,
+          0.43700000643730164,
+          0.2094999998807907
+        ]
+      ],
+      "partId": "Motherboard",
+      "usage": "assembly"
+    },
+    "gpu": {
+      "file": "gpu.glb",
+      "root": "GPU",
+      "inspection_pivot": [
+        0.004,
+        0.207,
+        0.057
+      ],
+      "triangles": 11260,
+      "draw_calls": 10,
+      "bounds_gltf": [
+        [
+          -0.07800000160932541,
+          0.18175998330116272,
+          -0.09300000965595245
+        ],
+        [
+          0.07249999791383743,
+          0.23749999701976776,
+          0.21299999952316284
+        ]
+      ],
+      "partId": "GPU",
+      "usage": "assembly"
+    },
+    "cpu": {
+      "file": "cpu.glb",
+      "root": "CPU",
+      "inspection_pivot": [
+        -0.071,
+        0.355,
+        0.106
+      ],
+      "triangles": 1944,
+      "draw_calls": 3,
+      "bounds_gltf": [
+        [
+          -0.07540000230073929,
+          0.3349999785423279,
+          0.085999995470047
+        ],
+        [
+          -0.06700000166893005,
+          0.375,
+          0.12600000202655792
+        ]
+      ],
+      "partId": "CPU",
+      "usage": "assembly"
+    },
+    "ram": {
+      "file": "ram.glb",
+      "root": "RAM",
+      "inspection_pivot": [
+        -0.059,
+        0.341,
+        0.013
+      ],
+      "triangles": 3480,
+      "draw_calls": 5,
+      "bounds_gltf": [
+        [
+          -0.07800000160932541,
+          0.2744999825954437,
+          0.0072999997064471245
+        ],
+        [
+          -0.041999999433755875,
+          0.4074999988079071,
+          0.018699999898672104
+        ]
+      ],
+      "partId": "RAM",
+      "usage": "assembly"
+    },
+    "ssd": {
+      "file": "ssd.glb",
+      "root": "SSD",
+      "inspection_pivot": [
+        -0.071,
+        0.263,
+        0.087
+      ],
+      "triangles": 1464,
+      "draw_calls": 4,
+      "bounds_gltf": [
+        [
+          -0.07259999960660934,
+          0.25200000405311584,
+          0.04699999839067459
+        ],
+        [
+          -0.06859999895095825,
+          0.27400001883506775,
+          0.12700000405311584
+        ]
+      ],
+      "partId": "SSD",
+      "usage": "assembly"
+    },
+    "psu": {
+      "file": "psu.glb",
+      "root": "PSU",
+      "inspection_pivot": [
+        -0.004,
+        0.065,
+        0.132
+      ],
+      "triangles": 3784,
+      "draw_calls": 5,
+      "bounds_gltf": [
+        [
+          -0.07900000363588333,
+          0.021999996155500412,
+          0.0494999960064888
+        ],
+        [
+          0.07100000232458115,
+          0.11400000005960464,
+          0.21450001001358032
+        ]
+      ],
+      "partId": "PSU",
+      "usage": "assembly"
+    },
+    "cooler": {
+      "file": "cooler.glb",
+      "root": "Cooler",
+      "inspection_pivot": [
+        0.002,
+        0.355,
+        0.106
+      ],
+      "triangles": 5588,
+      "draw_calls": 6,
+      "bounds_gltf": [
+        [
+          -0.06700000166893005,
+          0.2930000126361847,
+          0.04989999532699585
+        ],
+        [
+          0.07800000160932541,
+          0.4169999659061432,
+          0.13750000298023224
+        ]
+      ],
+      "partId": "Cooler",
+      "usage": "assembly"
+    }
+  }
+}

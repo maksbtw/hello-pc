@@ -16,6 +16,9 @@ backend/target/
 .DS_Store
 .mcp.json
 
+# --- Authoring / source assets (nie runtime: mastery Blendera, podglądy) ---
+assets/
+
 # --- env ---
 .env
 .env.*
