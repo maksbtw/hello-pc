@@ -11,7 +11,8 @@ export interface StepMeta {
   stageLabel: string; // nazwa na „scenie" (prawy panel)
   part: PartName; // powiązany podzespół (do jednozdaniowego opisu z parts.ts)
   icon: IconKey;
-  description: string; // dłuższy opis kroku (lewa sekcja, nad grafiką)
+  descTop: string; // 1. część opisu — kontekst/„co się dzieje" (góra)
+  descBottom: string; // 2. część opisu — szczegół/„jak to działa" (dół)
 }
 
 export const stepMeta: StepMeta[] = [
@@ -22,8 +23,10 @@ export const stepMeta: StepMeta[] = [
     stageLabel: 'Dysk SSD',
     part: 'SSD',
     icon: 'ssd',
-    description:
-      'Gdy uruchamiasz program, komputer odczytuje go z dysku jako długi ciąg bajtów. Twój tekst jest w tym pliku zapisany jako kolejne liczby — tutaj widzisz go wśród reszty danych programu.',
+    descTop:
+      'Wpisałeś tekst — teraz prześledzimy, co dzieje się z nim wewnątrz komputera. Podróż zaczyna się na dysku, bo to stamtąd komputer wczytuje program, który pokaże Twój tekst na ekranie.',
+    descBottom:
+      'Dla komputera litery to liczby.\nKażdy znak Twojego tekstu jest zapisany na dysku jako bajt — tutaj widzisz, która liczba odpowiada której literze.',
   },
   {
     id: 'ram',
@@ -32,8 +35,10 @@ export const stepMeta: StepMeta[] = [
     stageLabel: 'Pamięć RAM',
     part: 'RAM',
     icon: 'ram',
-    description:
-      'Dane z dysku trafiają do pamięci RAM, żeby procesor miał do nich szybki dostęp. Każdy bajt dostaje własny adres — jak numer domu na ulicy — pod którym można go znaleźć.',
+    descTop:
+      'Dysk jest wolny, więc zanim procesor zacznie pracę, Twój tekst wraz z programem są kopiowane do pamięci RAM — szybkiej pamięci podręcznej komputera.',
+    descBottom:
+      'W RAM każdy bajt dostaje własny adres, jak numer domu na ulicy. Dzięki temu procesor może błyskawicznie sięgnąć po dowolną literę, znając tylko jej adres.',
   },
   {
     id: 'cpu-decode',
@@ -42,8 +47,10 @@ export const stepMeta: StepMeta[] = [
     stageLabel: 'Procesor (CPU)',
     part: 'CPU',
     icon: 'cpu',
-    description:
-      'Procesor pobiera z pamięci bajty kodu maszynowego i dekoduje je na instrukcje. Każda instrukcja to jedno proste polecenie — np. przenieś dane albo wypisz tekst na ekran.',
+    descTop:
+      'Program to lista poleceń dla procesora, zapisana jako liczby (kod maszynowy). Procesor czyta je z pamięci po kolei.',
+    descBottom:
+      'Każdą liczbę procesor dekoduje na instrukcję — proste polecenie, np. „przenieś dane" albo „wypisz tekst". Podświetlona instrukcja to ta wykonywana właśnie teraz.',
   },
   {
     id: 'text-encode',
@@ -52,8 +59,10 @@ export const stepMeta: StepMeta[] = [
     stageLabel: 'Procesor (CPU)',
     part: 'CPU',
     icon: 'cpu',
-    description:
-      'Komputer nie zna liter — każdy znak zapisuje jako liczbę według standardu UTF-8, a potem jako ciąg zer i jedynek. Zwykła litera zajmuje 1 bajt, a polskie znaki z ogonkami nawet 2 bajty.',
+    descTop:
+      'Skąd komputer wie, że liczba 72 to litera „H"? Z ustalonego kodowania — UTF-8 — które każdej literze przypisuje liczbę.',
+    descBottom:
+      'Procesor operuje tylko na zerach i jedynkach, więc każda liczba to tak naprawdę ciąg bitów. Zwykła litera zajmuje 1 bajt (8 bitów), a polskie znaki z ogonkami aż 2 bajty.',
   },
   {
     id: 'raster',
@@ -62,8 +71,10 @@ export const stepMeta: StepMeta[] = [
     stageLabel: 'Karta graficzna (GPU)',
     part: 'GPU',
     icon: 'gpu',
-    description:
-      'Karta graficzna zamienia tekst na obraz: każdą literę rysuje z maleńkich kwadracików — pikseli — jak na kartce w kratkę. Zapalony piksel to 1, zgaszony to 0.',
+    descTop:
+      'Monitor nie rozumie liter — potrafi tylko zapalać punkty. Dlatego karta graficzna musi najpierw zamienić tekst na obrazek.',
+    descBottom:
+      'Każda litera jest rysowana z maleńkich kwadracików — pikseli — jak na kartce w kratkę. Zapalony piksel to 1, zgaszony to 0.',
   },
   {
     id: 'display',
@@ -72,7 +83,9 @@ export const stepMeta: StepMeta[] = [
     stageLabel: 'Monitor',
     part: 'Monitor',
     icon: 'monitor',
-    description:
-      'Dla każdego piksela zapisane są trzy liczby: ile ma czerwonego (R), zielonego (G) i niebieskiego (B), od 0 do 255. Monitor zapala piksele w tych kolorach i tak powstaje obraz Twojego tekstu.',
+    descTop:
+      'Gotowy obrazek trafia do monitora. Dla każdego piksela komputer wysyła jego kolor.',
+    descBottom:
+      'Kolor to trzy liczby: ile czerwonego (R), zielonego (G) i niebieskiego (B), od 0 do 255. Monitor zapala piksele w tych kolorach — i widzisz swój tekst na ekranie.',
   },
 ];

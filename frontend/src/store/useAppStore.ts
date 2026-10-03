@@ -10,7 +10,6 @@ interface AppState {
   text: string;
   response: SimulationResponse | null;
   currentStep: number; // 1..7
-  autoPlay: boolean; // auto-przewijanie kroków symulacji
   usedFallback: boolean; // dane z mocka (backend nie odpowiedział)
 
   /** Zaznaczona część w scenie 3D (Explore). null = nic nie wybrano. */
@@ -20,7 +19,6 @@ interface AppState {
   setText: (text: string) => void;
   setResponse: (response: SimulationResponse | null) => void;
   setCurrentStep: (n: number) => void;
-  setAutoPlay: (on: boolean) => void;
   setUsedFallback: (on: boolean) => void;
   /** Styk sceny 3D (Max) → panel (Anton). Zamrożony kontrakt wg PLAN.md. */
   setSelectedPart: (part: PartName | null) => void;
@@ -31,7 +29,6 @@ export const useAppStore = create<AppState>((set) => ({
   text: '',
   response: null,
   currentStep: 1,
-  autoPlay: false,
   usedFallback: false,
   selectedPart: null,
 
@@ -39,7 +36,6 @@ export const useAppStore = create<AppState>((set) => ({
   setText: (text) => set({ text }),
   setResponse: (response) => set({ response }),
   setCurrentStep: (currentStep) => set({ currentStep }),
-  setAutoPlay: (autoPlay) => set({ autoPlay }),
   setUsedFallback: (usedFallback) => set({ usedFallback }),
   setSelectedPart: (selectedPart) => set({ selectedPart }),
 }));
