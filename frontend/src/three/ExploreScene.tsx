@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, Html, ContactShadows } from '@react-three/drei';
+import { OrbitControls, Html, ContactShadows, Environment, Lightformer } from '@react-three/drei';
 import { useGLTF } from '@react-three/drei';
 import gsap from 'gsap';
 import {
@@ -483,12 +483,25 @@ export default function ExploreScene() {
         if (moved < 6) setSelectedPart(null);
       }}
     >
-      {/* Oświetlenie (offline, bez HDRI). Materiały PBR bez env-mapy są ciemne,
-          więc świecimy z kilku stron. Ciepły fill = motyw „lampa". */}
-      <ambientLight intensity={0.9} />
-      <directionalLight position={[3, 5, 2]} intensity={2.6} />
-      <directionalLight position={[-3, 2, -2]} intensity={1.0} color="#FFD9A0" />
-      <directionalLight position={[1, 1, 4]} intensity={1.2} />
+      {/* Oświetlenie offline. Zamiast samych directionali — IBL z Lightformerów
+          (renderowane w locie do cubemapy, bez HDRI z sieci): daje metalowi co
+          odbijać i naturalne wypełnienie. Direct key dokłada ostry światłocień. */}
+      <ambientLight intensity={0.3} />
+      {/* Key — ciepły, z góry (kierunek klosza), lekko ku kamerze. */}
+      <directionalLight position={[0.4, 6, 1.6]} intensity={1.8} color="#FFE7C2" />
+
+      <Environment resolution={256} frames={1}>
+        {/* Klosz lampy — duża, ciepła, jasna płaszczyzna nad modelem. */}
+        <Lightformer form="rect" intensity={3} color="#FFE7C2" position={[0, 5, 0.5]} scale={[8, 3, 1]} />
+        {/* Fill lewy — ciepły (orange/81). */}
+        <Lightformer form="rect" intensity={1.2} color="#FFD9A0" position={[-5, 1.5, 1]} scale={[5, 5, 1]} />
+        {/* Fill prawy/przedni — prawie biały, żywe odbicia na metalu. */}
+        <Lightformer form="rect" intensity={1.4} color="#FFF6EA" position={[4, 1, 4]} scale={[5, 5, 1]} />
+        {/* Rim z tyłu — chłodny kontur odcinający od tła. */}
+        <Lightformer form="rect" intensity={1} color="#CFE0FF" position={[0, 2.5, -5]} scale={[8, 4, 1]} />
+        {/* Otoczenie — ciemne ciepłe, żeby metal nie odbijał czerni. */}
+        <Lightformer form="rect" intensity={0.3} color="#3A3026" position={[0, -3, 0]} scale={[12, 12, 1]} />
+      </Environment>
 
       <Suspense fallback={<LoadingScreen />}>
         <AssembledPC />
