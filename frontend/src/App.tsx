@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import ExploreScene from './three/ExploreScene';
 import PartPanel from './explore/PartPanel';
+import Lamp from './explore/Lamp';
 
 import SimulationEntry from './simulation/SimulationEntry';
 import SimulationStep from './simulation/SimulationStep';
@@ -72,6 +73,8 @@ function Explore() {
       {/* Canvas kończy się przed panelem (360px + 16px margines + 16px odstęp),
           żeby model był wyśrodkowany w widocznym obszarze, nie pod panelem. */}
       <div className="absolute inset-y-0 left-0 right-[392px]">
+        {/* Lampa scenowa (wg Figmy) — za przezroczystym Canvasem, oświetla model. */}
+        <Lamp />
         <ExploreScene />
       </div>
       <nav className="absolute left-4 top-4 flex gap-4 font-ui text-sm text-accent">
