@@ -1,7 +1,7 @@
 // Kontrakt API — ten sam kształt co rekordy Javy w backendzie i mock JSON.
 // Step to unia rozróżniana polem "id".
 
-export type Level = 'noob' | 'mid' | 'expert';
+export type Level = 'noob' | 'expert';
 
 export interface MouseStep {
   id: 'mouse';
