@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { parts } from '../data/parts';
 import type { PartName } from '../data/parts';
 import type { Level } from '../types/api';
 import { getCachedCatalog, getVariantModels } from '../three/catalog';
+import { postAsk } from '../api/client';
 
 /**
  * Panel boczny eksploracji (Max). Czyta selectedPart ze store i pokazuje opis
@@ -45,6 +47,79 @@ function IdlePanel() {
         szczegóły. Obracaj scenę przeciągając, przybliżaj scrollem.
       </p>
     </div>
+  );
+}
+
+/**
+ * Slot AI — pyta lokalny model (/api/ask) o aktualnie oglądany komponent.
+ * `context` (nazwa części + ew. wariant) i poziom doklejamy do pytania, żeby
+ * model wiedział, czego dotyczy „ta część". Resetuje się przez key (part+wariant).
+ */
+function AskBox({ context, level }: { context: string; level: Level }) {
+  const [q, setQ] = useState('');
+  const [answer, setAnswer] = useState<string | null>(null);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  async function submit() {
+    const question = q.trim();
+    if (!question || loading) return;
+    setLoading(true);
+    setError(false);
+    setAnswer(null);
+    const levelHint =
+      level === 'noob'
+        ? 'Odpowiadaj prosto, dla początkującego.'
+        : 'Odpowiadaj technicznie, dla zaawansowanego.';
+    try {
+      const msg = await postAsk(
+        `Kontekst: komponent komputera „${context}". ${levelHint} Pytanie: ${question}`,
+      );
+      setAnswer(msg);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <section className="rounded-lg border border-border bg-surface/60 p-4">
+      <p className="font-ui text-xs uppercase tracking-wide text-text-faint">Zapytaj o tę część</p>
+      <div className="mt-3 flex gap-2">
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') submit();
+          }}
+          disabled={loading}
+          placeholder="np. po co mu chłodzenie?"
+          className="min-w-0 flex-1 rounded-md border border-border bg-bg px-3 py-2 font-ui text-sm text-text placeholder:text-text-faint disabled:cursor-not-allowed disabled:opacity-60"
+        />
+        <button
+          onClick={submit}
+          disabled={loading || !q.trim()}
+          className="rounded-md bg-accent px-3 py-2 font-ui text-sm font-medium text-bg transition-opacity disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? '…' : 'Zapytaj'}
+        </button>
+      </div>
+
+      {loading && (
+        <p className="mt-3 font-ui text-xs text-text-faint">Model myśli… (do ~1 min)</p>
+      )}
+      {error && !loading && (
+        <p className="mt-3 font-ui text-xs text-state-error">
+          Nie udało się uzyskać odpowiedzi. Spróbuj ponownie.
+        </p>
+      )}
+      {answer && !loading && (
+        <p className="mt-3 whitespace-pre-wrap font-ui text-sm leading-relaxed text-text">
+          {answer}
+        </p>
+      )}
+    </section>
   );
 }
 
@@ -146,26 +221,12 @@ function SelectedPanel({ part }: { part: PartName }) {
           </section>
         )}
 
-        {/* Slot AI — integracja: Anton (/api/ask) */}
-        <section className="rounded-lg border border-border bg-surface/60 p-4">
-          <p className="font-ui text-xs uppercase tracking-wide text-text-faint">
-            Zapytaj o tę część
-          </p>
-          <div className="mt-3 flex gap-2">
-            <input
-              disabled
-              placeholder="np. po co mu chłodzenie?"
-              className="min-w-0 flex-1 rounded-md border border-border bg-bg px-3 py-2 font-ui text-sm text-text placeholder:text-text-faint disabled:cursor-not-allowed disabled:opacity-60"
-            />
-            <button
-              disabled
-              className="rounded-md bg-accent px-3 py-2 font-ui text-sm font-medium text-bg disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              Zapytaj
-            </button>
-          </div>
-          <p className="mt-2 font-ui text-xs text-text-faint">AI (lokalne) — integracja w toku.</p>
-        </section>
+        {/* Slot AI — lokalny model przez /api/ask. Kontekst = część (+ wariant). */}
+        <AskBox
+          key={`${part}:${focusId ?? ''}`}
+          context={activeType ? `${parts[part].title} — ${activeType.name}` : parts[part].title}
+          level={level}
+        />
       </div>
     </>
   );

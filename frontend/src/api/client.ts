@@ -29,6 +29,22 @@ export async function postSimulation(text: string): Promise<SimulationResult> {
   }
 }
 
+/**
+ * Pyta lokalny model (/api/ask) o wybrany komponent. Rzuca przy błędzie —
+ * UI pokazuje komunikat (nie ma sensownego mocka dla swobodnego pytania).
+ */
+export async function postAsk(question: string): Promise<string> {
+  const res = await fetch('/api/ask', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ question }),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const body = (await res.json()) as { message?: string };
+  if (!body.message) throw new Error('Pusta odpowiedź');
+  return body.message;
+}
+
 export async function getHealth(): Promise<boolean> {
   try {
     const res = await fetch('/api/health');
