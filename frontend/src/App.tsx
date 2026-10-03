@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import ExploreScene from './three/ExploreScene';
+import { useAppStore } from './store/useAppStore';
+import { parts } from './data/parts';
 
 /**
  * Szkielet aplikacji: bramka szerokości ekranu, tło "lampa" i trasy-placeholdery.
@@ -62,12 +64,26 @@ function Placeholder({ title, owner }: { title: string; owner: string }) {
 
 // --- Eksploracja: scena 3D (Max). Panel boczny dojdzie w kroku 7. ---
 function Explore() {
+  const selectedPart = useAppStore((s) => s.selectedPart);
+
   return (
     <div className="relative h-full w-full">
       <ExploreScene />
       <nav className="absolute left-4 top-4 flex gap-4 font-ui text-sm text-accent">
         <Link to="/">← Start</Link>
       </nav>
+
+      {/* Tymczasowy readout zaznaczonej części (krok 4). Panel = krok 7. */}
+      <div className="absolute right-4 top-4 min-w-48 rounded-lg border border-border bg-panel/80 p-4 backdrop-blur">
+        <p className="font-ui text-xs uppercase tracking-wide text-text-faint">Zaznaczona część</p>
+        <p className="mt-1 font-heading text-lg text-text">
+          {selectedPart ? parts[selectedPart].title : '—'}
+        </p>
+        {!selectedPart && (
+          <p className="mt-1 font-ui text-xs text-text-muted">Kliknij część w scenie</p>
+        )}
+      </div>
+
       <p className="absolute bottom-4 left-1/2 -translate-x-1/2 font-ui text-xs text-text-faint">
         Przeciągnij, aby obrócić • scroll = zoom
       </p>

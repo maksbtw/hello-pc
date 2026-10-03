@@ -3,6 +3,8 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Html, ContactShadows } from '@react-three/drei';
 import { useGLTF } from '@react-three/drei';
 import { ASSEMBLY_PARTS, modelUrl, useCatalog } from './catalog';
+import { useAppStore } from '../store/useAppStore';
+import type { PartName } from '../data/parts';
 
 /**
  * Scena eksploracji (Max): złożony PC z 8 modeli montażowych w origin.
@@ -22,9 +24,28 @@ function LoadingScreen() {
   );
 }
 
-function AssemblyPart({ url }: { url: string }) {
+function AssemblyPart({ part, url }: { part: PartName; url: string }) {
   const { scene } = useGLTF(url);
-  return <primitive object={scene} />;
+  const setSelectedPart = useAppStore((s) => s.setSelectedPart);
+
+  return (
+    <group
+      // stopPropagation → zdarzenie łapie tylko najbliższa część, nie te za nią.
+      onClick={(e) => {
+        e.stopPropagation();
+        setSelectedPart(part);
+      }}
+      onPointerOver={(e) => {
+        e.stopPropagation();
+        document.body.style.cursor = 'pointer';
+      }}
+      onPointerOut={() => {
+        document.body.style.cursor = 'default';
+      }}
+    >
+      <primitive object={scene} />
+    </group>
+  );
 }
 
 function AssembledPC() {
@@ -34,15 +55,21 @@ function AssembledPC() {
       {ASSEMBLY_PARTS.map((part) => {
         const asset = data.assemblyByPart.get(part);
         if (!asset) return null;
-        return <AssemblyPart key={part} url={modelUrl(asset.file)} />;
+        return <AssemblyPart key={part} part={part} url={modelUrl(asset.file)} />;
       })}
     </>
   );
 }
 
 export default function ExploreScene() {
+  const setSelectedPart = useAppStore((s) => s.setSelectedPart);
   return (
-    <Canvas camera={{ position: [0.55, 0.45, 0.75], fov: 45 }} dpr={[1, 2]}>
+    <Canvas
+      camera={{ position: [0.55, 0.45, 0.75], fov: 45 }}
+      dpr={[1, 2]}
+      // Klik w tło (poza modelem) = odznaczenie.
+      onPointerMissed={() => setSelectedPart(null)}
+    >
       {/* Oświetlenie (offline, bez HDRI). Materiały PBR bez env-mapy są ciemne,
           więc świecimy z kilku stron. Ciepły fill = motyw „lampa". */}
       <ambientLight intensity={0.9} />
