@@ -22,3 +22,6 @@ assets/
 # --- env ---
 .env
 .env.*
+
+# Claude Code local config
+.claude/

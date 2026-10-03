@@ -32,9 +32,11 @@ function ModelLoader({ url }: { url: string }) {
 export interface SceneProps {
   /** Ścieżka do .glb w public/models/. Brak → placeholder-bryła. */
   modelUrl?: string;
+  /** Domyślna orientacja modelu (radiany) — by „dobra" strona była na starcie. */
+  rotation?: [number, number, number];
 }
 
-export default function Scene({ modelUrl }: SceneProps) {
+export default function Scene({ modelUrl, rotation = [0, 0, 0] }: SceneProps) {
   return (
     <Canvas camera={{ position: [2, 1.4, 2.4], fov: 45, near: 0.01 }} dpr={[1, 2]}>
       {/* Oświetlenie offline (materiały PBR bez env-mapy są ciemne). */}
@@ -44,9 +46,12 @@ export default function Scene({ modelUrl }: SceneProps) {
       <directionalLight position={[1, 1, 4]} intensity={1.1} />
 
       <Suspense fallback={<LoadingScreen />}>
-        {/* Bounds dopasowuje kamerę do rozmiaru modelu (observe → re-fit po zmianie). */}
-        <Bounds key={modelUrl} fit clip observe margin={1.15}>
-          {modelUrl ? <ModelLoader url={modelUrl} /> : <PlaceholderMesh />}
+        {/* Bounds dopasowuje kamerę do rozmiaru modelu (observe → re-fit po zmianie).
+            key zależy też od orientacji → re-fit po zmianie rotacji. */}
+        <Bounds key={`${modelUrl}|${rotation.join(',')}`} fit clip observe margin={1.15}>
+          <group rotation={rotation}>
+            {modelUrl ? <ModelLoader url={modelUrl} /> : <PlaceholderMesh />}
+          </group>
         </Bounds>
       </Suspense>
 

@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import type {
   MouseStep,
@@ -463,7 +463,7 @@ export function TextEncodeStepView({ meta }: { step: TextEncodeStep; meta: StepM
   let bi = 0; // indeks bajtu (do stagger animacji)
   return (
     <StepLayout graphic={graphic} meta={meta}>
-      <div className="flex max-w-full flex-col gap-3 overflow-x-auto pb-2">
+      <div className="flex max-w-full flex-col gap-3 overflow-x-auto overflow-y-hidden pb-2">
         <div className="flex items-center" style={{ gap: GAP }}>
           <span className="w-20 shrink-0 font-ui text-xs text-text-dim">Znaki</span>
           <div className="flex" style={{ gap: GAP }}>
@@ -488,7 +488,7 @@ export function TextEncodeStepView({ meta }: { step: TextEncodeStep; meta: StepM
                   <div
                     key={`${c.char}-${k}-${j}`}
                     style={{ width: CELL, animationDelay: `${300 + k * 70}ms` }}
-                    className="sim-pop"
+                    className="sim-pop-flat"
                   >
                     <NumberCard dec={b} hex={`0x${hex2(b)}`} />
                   </div>
@@ -516,19 +516,100 @@ export function TextEncodeStepView({ meta }: { step: TextEncodeStep; meta: StepM
   );
 }
 
-/* 6 · Rasteryzacja — litery → rasteryzacja → siatka pikseli */
-export function RasterStepView({ step, meta }: { step: RasterStep; meta: StepMeta }) {
-  const text = useAppStore((s) => s.text);
-  const chars = [...(text || 'Hello')];
-  let hx = -1;
-  let hy = -1;
-  for (let y = 0; y < step.pixels.length && hy < 0; y++) {
-    const x = step.pixels[y].indexOf(1);
-    if (x >= 0) {
-      hx = x;
-      hy = y;
-    }
+/* Rasteryzacja całego napisu: ta sama czcionka daje piksele 0/1 ORAZ gładki
+   obraz w tej samej geometrii (ten sam font, origin i przycięcie) — dzięki temu
+   gładki tekst nakłada się 1:1 na siatkę pikseli. */
+const RASTER_FONT_PX = 13;
+function rasterizeText(text: string): { rows: number[][]; cols: number; smoothSrc: string } {
+  if (typeof document === 'undefined') return { rows: [], cols: 0, smoothSrc: '' };
+  const font = `bold ${RASTER_FONT_PX}px monospace`;
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return { rows: [], cols: 0, smoothSrc: '' };
+  ctx.font = font;
+  const w = Math.max(1, Math.ceil(ctx.measureText(text).width) + 2);
+  const h = RASTER_FONT_PX + 4;
+  canvas.width = w;
+  canvas.height = h;
+  ctx.font = font;
+  ctx.textBaseline = 'top';
+  ctx.fillStyle = '#fff';
+  ctx.fillText(text, 1, 2);
+  const data = ctx.getImageData(0, 0, w, h).data;
+  const full: number[][] = [];
+  for (let y = 0; y < h; y++) {
+    const row: number[] = [];
+    for (let x = 0; x < w; x++) row.push(data[(y * w + x) * 4 + 3] > 110 ? 1 : 0);
+    full.push(row);
   }
+  // przytnij puste wiersze u góry/dołu (zapamiętaj ile ucięto z góry)
+  const nonEmpty = (r: number[]) => r.some((v) => v === 1);
+  let top = 0;
+  let bottom = full.length;
+  while (top < bottom && !nonEmpty(full[top])) top++;
+  while (bottom > top && !nonEmpty(full[bottom - 1])) bottom--;
+  const rows = full.slice(top, bottom);
+  const rowCount = rows.length || 1;
+
+  // Gładki wariant: ten sam napis, ten sam font i origin, wyrenderowany w wysokiej
+  // rozdzielczości na przyciętym obszarze (w × rowCount w jednostkach źródłowych).
+  const ss = 8; // nadpróbkowanie dla ostrości
+  const c2 = document.createElement('canvas');
+  c2.width = w * ss;
+  c2.height = rowCount * ss;
+  const x2 = c2.getContext('2d');
+  let color = '#eceef2';
+  const probe = document.createElement('span');
+  probe.className = 'text-text-bright';
+  probe.style.cssText = 'position:absolute;opacity:0;pointer-events:none';
+  document.body.appendChild(probe);
+  color = getComputedStyle(probe).color || color;
+  probe.remove();
+  let smoothSrc = '';
+  if (x2) {
+    x2.scale(ss, ss);
+    x2.font = font;
+    x2.textBaseline = 'top';
+    x2.fillStyle = color;
+    x2.fillText(text, 1, 2 - top); // ten sam origin, przesunięty o ucięte wiersze
+    smoothSrc = c2.toDataURL();
+  }
+  return { rows, cols: w, smoothSrc };
+}
+
+/* 6 · Rasteryzacja — cały napis → siatka pikseli, potem płynne przejście w gładki tekst */
+export function RasterStepView({ meta }: { step: RasterStep; meta: StepMeta }) {
+  const text = useAppStore((s) => s.text) || 'Hello';
+  const chars = [...text];
+  const { rows, cols, smoothSrc } = useMemo(() => rasterizeText(text), [text]);
+  const rowCount = rows.length;
+  // Rozmiar piksela tak, by cały napis zmieścił się w ~580 px.
+  const cell = Math.max(4, Math.min(9, Math.floor(580 / Math.max(cols, 1))));
+  const gridW = cols * cell;
+  const gridH = rowCount * cell;
+
+  // Pętla: piksele (od lewej) → gładki tekst (raster) → puste czarne tło → od nowa.
+  // Czarny box zostaje cały czas; zmienia się tylko treść w środku.
+  const [cycle, setCycle] = useState(0);
+  const [phase, setPhase] = useState<'pixels' | 'smooth' | 'out'>('pixels');
+  useEffect(() => {
+    setPhase('pixels');
+    const popDur = cols * 14 + 650; // zapalanie pikseli (od lewej) + „pop"
+    const holdSmooth = 1500; // trzymaj gładki tekst
+    const holdBlack = 650; // puste czarne tło
+    const fade = 700; // czas przejść opacity
+    const t1 = setTimeout(() => setPhase('smooth'), popDur);
+    const t2 = setTimeout(() => setPhase('out'), popDur + fade + holdSmooth);
+    const t3 = setTimeout(
+      () => setCycle((c) => c + 1),
+      popDur + fade + holdSmooth + fade + holdBlack,
+    );
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [cycle, text, cols]);
 
   const graphic = (
     <div className="flex flex-wrap items-center justify-center gap-3">
@@ -543,84 +624,142 @@ export function RasterStepView({ step, meta }: { step: RasterStep; meta: StepMet
   return (
     <StepLayout graphic={graphic} meta={meta}>
       <div className="flex flex-col items-center gap-3">
-        <div
-          className="inline-grid gap-0.5 rounded-md border border-border bg-bg2 p-2"
-          style={{ gridTemplateColumns: `repeat(${step.width}, 14px)` }}
-        >
-          {step.pixels.flatMap((row, y) =>
-            row.map((p, x) => {
-              const hi = x === hx && y === hy;
-              const idx = y * step.width + x;
-              return (
-                <span
-                  key={`${x}-${y}`}
-                  className={`h-3.5 w-3.5 rounded-sm ${
-                    hi
-                      ? 'bg-accent shadow-[0_0_10px_2px_rgba(245,165,36,0.7)]'
-                      : p
-                        ? 'bg-text-bright sim-pop'
-                        : 'bg-surface-overlay'
-                  }`}
-                  style={p ? { animationDelay: `${idx * 10}ms` } : undefined}
-                />
-              );
-            }),
-          )}
-        </div>
-        {hx >= 0 && (
-          <div className="inline-flex rounded-md border border-border bg-surface px-3 py-1.5 font-mono text-xs text-text-muted">
-            x: {hx} · y: {hy} · <span className="ml-1 text-accent">zapalony</span>
+        {/* czarny box — zostaje cały czas, większy margines wokół tekstu */}
+        <div className="flex items-center justify-center rounded-lg border border-border bg-bg2 px-12 py-10">
+          <div className="relative" style={{ width: gridW, height: gridH }}>
+            {/* 1) piksele (od lewej) — widoczne najpierw; montują się na starcie cyklu */}
+            {phase !== 'out' && (
+              <div
+                key={cycle}
+                className="absolute inset-0 grid transition-opacity duration-700 ease-in-out"
+                style={{
+                  gridTemplateColumns: `repeat(${cols}, ${cell}px)`,
+                  opacity: phase === 'pixels' ? 1 : 0,
+                }}
+              >
+                {rows.flatMap((row, y) =>
+                  row.map((p, x) => (
+                    <span
+                      key={`${x}-${y}`}
+                      className={p ? 'bg-text-bright sim-pop' : 'bg-transparent'}
+                      style={{
+                        width: cell,
+                        height: cell,
+                        ...(p ? { animationDelay: `${x * 14}ms` } : {}),
+                      }}
+                    />
+                  )),
+                )}
+              </div>
+            )}
+
+            {/* 2) gładki tekst (raster) — wchodzi na piksele, potem gaśnie do czarnego */}
+            <img
+              src={smoothSrc}
+              alt={text}
+              draggable={false}
+              className="absolute inset-0 transition-opacity duration-700 ease-in-out"
+              style={{ width: gridW, height: gridH, opacity: phase === 'smooth' ? 1 : 0 }}
+            />
           </div>
-        )}
+        </div>
+
       </div>
     </StepLayout>
   );
 }
 
-/* 7 · Monitor — siatka RGB → wysłanie obrazu → ekran z tekstem */
-export function DisplayStepView({ step, meta }: { step: DisplayStep; meta: StepMeta }) {
-  const text = useAppStore((s) => s.text);
+/* 7 · Monitor — rasteryzowany tekst „drukuje się" na ekranie znak po znaku */
+export function DisplayStepView({ meta }: { step: DisplayStep; meta: StepMeta }) {
+  const text = useAppStore((s) => s.text) || 'Hello';
+  const { rows, cols, smoothSrc } = useMemo(() => rasterizeText(text), [text]);
+  const rowCount = rows.length;
+  const cell = Math.max(3, Math.min(5, Math.floor(280 / Math.max(cols, 1))));
+  const gridW = cols * cell;
+  const gridH = rowCount * cell;
+  const screenW = gridW + 60;
+  const screenH = Math.round(screenW * 0.6);
+
+  // „Drukowanie" na monitorze: rasteryzowany tekst pojawia się znak po znaku.
+  const nchars = [...text].length || 1;
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    let cancelled = false;
+    let id: ReturnType<typeof setTimeout>;
+    const run = () => {
+      setShown(0);
+      let i = 0;
+      const tick = () => {
+        if (cancelled) return;
+        i += 1;
+        setShown(i);
+        if (i < nchars) {
+          id = setTimeout(tick, 240); // kolejny znak
+        } else {
+          id = setTimeout(run, 2000); // gotowe → chwila przerwy → od nowa
+        }
+      };
+      id = setTimeout(tick, 240);
+    };
+    run();
+    return () => {
+      cancelled = true;
+      clearTimeout(id);
+    };
+  }, [text, nchars]);
+  const revealW = Math.round((shown / nchars) * gridW);
 
   const graphic = (
     <div className="flex flex-wrap items-center justify-center gap-3">
-      <FlowCard icon={<PixelIcon />} title="piksele RGB" subtitle="kolor = R + G + B" />
+      <FlowCard icon={<PixelIcon />} title="obraz pikseli" subtitle="efekt rasteryzacji" />
       <ArrowRight />
       <FlowCard icon={<SignalIcon />} title="sygnał wideo" subtitle="wysłanie do monitora" />
       <ArrowRight />
-      <FlowCard icon={<ScreenIcon />} title="ekran" subtitle="zapala piksele" />
+      <FlowCard icon={<ScreenIcon />} title="ekran" subtitle="wypisuje znak po znaku" />
     </div>
   );
 
   return (
     <StepLayout graphic={graphic} meta={meta}>
-      <div className="flex flex-col items-center gap-4">
-        {/* próbki kolorów pikseli (R G B) */}
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          {step.sample.map((s, i) => (
-            <div
-              key={i}
-              className="sim-rise flex flex-col items-center gap-1 rounded-md border border-border bg-bg2 p-2"
-              style={{ animationDelay: `${i * 90}ms` }}
-            >
+      <div className="flex flex-col items-center gap-8">
+        {/* monitor: ekran na podstawce (skala ~1.2) */}
+        <div className="flex flex-col items-center" style={{ transform: 'scale(1.2)', transformOrigin: 'center' }}>
+          {/* ekran monitora — proporcje jak prawdziwy ekran (tekst wyśrodkowany) */}
+          <div
+            className="relative flex items-center justify-center overflow-hidden rounded-xl border-4 border-surface bg-black shadow-[0_0_40px_rgba(96,165,250,0.18)]"
+            style={{ width: screenW, height: screenH }}
+          >
+            <div className="relative" style={{ width: gridW, height: gridH }}>
+              {/* rasteryzowany tekst odsłaniany znak po znaku (drukowanie) */}
+              <div
+                className="absolute inset-y-0 left-0 overflow-hidden"
+                style={{ width: revealW }}
+              >
+                <img
+                  src={smoothSrc}
+                  alt={text}
+                  draggable={false}
+                  style={{ width: gridW, height: gridH, maxWidth: 'none' }}
+                />
+              </div>
+              {/* migający kursor na krawędzi „druku" */}
               <span
-                className="h-5 w-10 rounded-sm border border-border"
-                style={{ background: `rgb(${s.rgb[0]}, ${s.rgb[1]}, ${s.rgb[2]})` }}
+                className="sim-cursor absolute top-0 bg-text-bright"
+                style={{ left: revealW + 2, width: Math.max(2, Math.round(cell * 0.6)), height: gridH }}
               />
-              <span className="font-mono text-xs text-data-bytes">
-                {s.rgb[0]} {s.rgb[1]} {s.rgb[2]}
-              </span>
             </div>
-          ))}
-        </div>
-
-        {/* monitor „włącza się" — rozbłysk + linia skanująca + świecący tekst */}
-        <div className="relative overflow-hidden rounded-lg border-2 border-border bg-black shadow-[0_0_40px_rgba(96,165,250,0.15)]">
-          <div className="sim-screen-on flex h-48 w-80 items-center justify-center">
-            <span className="sim-screen-text font-mono text-4xl tracking-widest text-text-bright">
-              {text || 'Hello'}
-            </span>
           </div>
-          <span className="sim-scanline" />
+          {/* szyjka */}
+          <div className="bg-surface-overlay" style={{ width: Math.round(screenW * 0.14), height: Math.round(screenH * 0.16) }} />
+          {/* podstawa (trapez) — większa */}
+          <div
+            className="rounded-sm bg-surface-overlay"
+            style={{
+              width: Math.round(screenW * 0.85),
+              height: 16,
+              clipPath: 'polygon(10% 0, 90% 0, 100% 100%, 0 100%)',
+            }}
+          />
         </div>
         <p className="font-ui text-sm text-text-dim">Gotowe. Twój tekst jest na ekranie.</p>
       </div>

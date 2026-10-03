@@ -17,6 +17,18 @@ const STEP_MODEL: Record<IconKey, string> = {
   monitor: 'monitor-ips.glb',
 };
 
+// Domyślna orientacja każdego modelu (radiany), by „dobra" strona była na starcie
+// (np. karta graficzna wentylatorami do góry, monitor ekranem do przodu).
+const TAU = Math.PI * 2;
+const STEP_MODEL_ROTATION: Record<IconKey, [number, number, number]> = {
+  mouse: [0, 0, 0],
+  ssd: [0, 0, 0],
+  ram: [0, 0, 0],
+  cpu: [-TAU / 4, 0, 0],
+  gpu: [TAU / 2, 0, 0],
+  monitor: [0, TAU / 2, 0],
+};
+
 /** Powłoka ekranu symulacji wg template'u z Figmy:
  *  górny pasek + pasek 7 kroków + układ (lewa karta | scena + opis) + dolny pasek. */
 
@@ -187,7 +199,10 @@ export default function SimShell({ index, meta, onPrev, onNext, onSelect, childr
         {/* prawa kolumna: model 3D (bez ramki, obracalny) + sam tekst na dole */}
         <aside className="flex min-h-0 flex-col">
           <div className="min-h-0 flex-1">
-            <Scene modelUrl={`/models/${STEP_MODEL[meta.icon]}`} />
+            <Scene
+              modelUrl={`/models/${STEP_MODEL[meta.icon]}`}
+              rotation={STEP_MODEL_ROTATION[meta.icon]}
+            />
           </div>
           <div className="mt-4">
             <h2 className="font-heading text-lg text-text-bright">{meta.stageLabel}</h2>

@@ -218,6 +218,42 @@
   }
 }
 
+/* migający kursor „drukowania" na monitorze */
+.sim-cursor {
+  animation: sim-cursor 1s step-end infinite;
+}
+@keyframes sim-cursor {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* przepływ kolorów (monitor) — obrót barw pikseli */
+.sim-hue {
+  animation: sim-hue 5s linear infinite;
+}
+@keyframes sim-hue {
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+/* animowany gradient (gładki kolorowy tekst na monitorze) */
+.sim-gradient {
+  background-size: 220% 100%;
+  animation: sim-gradient 4s linear infinite;
+}
+@keyframes sim-gradient {
+  to {
+    background-position: 220% 0;
+  }
+}
+
 /* znacznik „teraz" (żółty) — pulsująca poświata */
 .sim-now {
   animation: sim-now 1.8s ease-in-out infinite;
@@ -229,6 +265,22 @@
   }
   50% {
     box-shadow: 0 0 12px 1px rgba(245, 165, 36, 0.6);
+  }
+}
+
+/* „pop" bez przeskalowania >1 (nie powoduje poziomego przepełnienia/scrolla) */
+.sim-pop-flat {
+  opacity: 0;
+  animation: sim-pop-flat 0.4s ease-out forwards;
+}
+@keyframes sim-pop-flat {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 

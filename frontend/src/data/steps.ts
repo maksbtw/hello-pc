@@ -60,9 +60,9 @@ export const stepMeta: StepMeta[] = [
     part: 'CPU',
     icon: 'cpu',
     descTop:
-      'Skąd komputer wie, że liczba 72 to litera „H"? Z ustalonego kodowania — UTF-8 — które każdej literze przypisuje liczbę.',
+      'Skąd komputer wie, że liczba 72 to litera „H"? \nZ ustalonego kodowania UTF-8 — które każdej literze przypisuje liczbę.',
     descBottom:
-      'Procesor operuje tylko na zerach i jedynkach, więc każda liczba to tak naprawdę ciąg bitów. Zwykła litera zajmuje 1 bajt (8 bitów), a polskie znaki z ogonkami aż 2 bajty.',
+      'Procesor operuje tylko na zerach i jedynkach, więc każda liczba to tak naprawdę ciąg bitów. \nZwykła litera zajmuje 1 bajt (8 bitów), a polskie znaki z ogonkami aż 2 bajty.',
   },
   {
     id: 'raster',
@@ -74,7 +74,7 @@ export const stepMeta: StepMeta[] = [
     descTop:
       'Monitor nie rozumie liter — potrafi tylko zapalać punkty. Dlatego karta graficzna musi najpierw zamienić tekst na obrazek.',
     descBottom:
-      'Każda litera jest rysowana z maleńkich kwadracików — pikseli — jak na kartce w kratkę. Zapalony piksel to 1, zgaszony to 0.',
+      'Każda litera jest rysowana z maleńkich kwadracików — pikseli, jak na kartce w kratkę. \nZapalony piksel to 1, zgaszony to 0.',
   },
   {
     id: 'display',
@@ -84,8 +84,8 @@ export const stepMeta: StepMeta[] = [
     part: 'Monitor',
     icon: 'monitor',
     descTop:
-      'Gotowy obrazek trafia do monitora. Dla każdego piksela komputer wysyła jego kolor.',
+      'Gotowy obraz — siatka pikseli z poprzedniego kroku — trafia do monitora przez kabel wideo.',
     descBottom:
-      'Kolor to trzy liczby: ile czerwonego (R), zielonego (G) i niebieskiego (B), od 0 do 255. Monitor zapala piksele w tych kolorach — i widzisz swój tekst na ekranie.',
+      'Monitor zapala piksele i odświeża obraz wiele razy na sekundę. \n Tutaj Twój tekst pojawia się na ekranie znak po znaku — tak, jak komputer go wypisuje.',
   },
 ];
