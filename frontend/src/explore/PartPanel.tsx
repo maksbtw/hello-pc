@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { parts } from '../data/parts';
 import type { PartName } from '../data/parts';
@@ -38,14 +38,70 @@ function LevelSwitch() {
   );
 }
 
+// --- Ikony akcji (inline SVG, offline, dziedziczą currentColor) ---
+function BoxIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+      <path d="M3.27 6.96 12 12.01l8.73-5.05" />
+      <path d="M12 22.08V12" />
+    </svg>
+  );
+}
+function ClickIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 3l7.07 17 2.51-7.39L20 10.09 3 3z" />
+    </svg>
+  );
+}
+function RotateIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 4 23 10 17 10" />
+      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+    </svg>
+  );
+}
+function ZoomIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="7" />
+      <path d="M21 21l-4.35-4.35" />
+      <path d="M11 8v6M8 11h6" />
+    </svg>
+  );
+}
+
+function ActionRow({ icon, title, desc }: { icon: ReactNode; title: string; desc: string }) {
+  return (
+    <li className="flex items-center gap-3 rounded-lg border border-border bg-surface/60 px-3 py-2.5 text-left">
+      <span className="flex h-8 w-8 flex-none items-center justify-center rounded-md bg-accent/10 text-accent">
+        {icon}
+      </span>
+      <span className="font-ui text-sm leading-snug">
+        <span className="font-medium text-text">{title}</span>{' '}
+        <span className="text-text-muted">— {desc}</span>
+      </span>
+    </li>
+  );
+}
+
 function IdlePanel() {
   return (
-    <div className="flex h-full flex-col justify-center">
-      <h2 className="font-heading text-xl text-text">Eksploracja</h2>
-      <p className="mt-2 font-ui text-sm leading-relaxed text-text-muted">
-        Kliknij część w scenie 3D (CPU, GPU, RAM, SSD…), aby ją wysunąć i poznać
-        szczegóły. Obracaj scenę przeciągając, przybliżaj scrollem.
+    <div className="flex h-full flex-col items-center justify-center text-center">
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-surface text-accent">
+        <BoxIcon />
+      </div>
+      <h2 className="mt-4 font-heading text-xl text-text">Eksploracja</h2>
+      <p className="mt-2 max-w-[260px] font-ui text-sm leading-relaxed text-text-muted">
+        Poznaj podzespoły komputera — wybierz część, aby ją wysunąć i zobaczyć szczegóły.
       </p>
+      <ul className="mt-6 w-full space-y-2">
+        <ActionRow icon={<ClickIcon />} title="Kliknij część" desc="wysuwa ją i otwiera opis" />
+        <ActionRow icon={<RotateIcon />} title="Przeciągnij" desc="obraca scenę 3D" />
+        <ActionRow icon={<ZoomIcon />} title="Scroll" desc="przybliża i oddala" />
+      </ul>
     </div>
   );
 }
