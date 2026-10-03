@@ -8,6 +8,7 @@ import {
   ASSEMBLY_PARTS,
   boundsCenter,
   boundsSize,
+  centerOf,
   getVariantModels,
   modelUrl,
   useCatalog,
@@ -21,6 +22,9 @@ import type { PartName } from '../data/parts';
 const HIGHLIGHT_COLOR = '#F5A524';
 // Siła emissive dla zaznaczonego/wyróżnionego (niższa = subtelniejsze oznaczenie).
 const HIGHLIGHT_SELECTED = 0.16;
+
+// Wyłącza raycast danego mesha (nie dopisuje przecięć).
+const NO_RAYCAST = () => {};
 
 // Dystans kamery w widoku całego PC.
 const DEFAULT_VIEW_DISTANCE = 1.0;
@@ -83,17 +87,18 @@ function AssemblyPart({ part, url, hovered, hasVariants, onHover, onUnhover }: A
   const emisTargetRef = useRef(0);
   const opacityTargetRef = useRef(1);
   const offsetTargetRef = useRef(0); // docelowe wysunięcie w X
+  const raycastOffRef = useRef(false); // czy raycast jest aktualnie wyłączony
 
   // Klon sceny z WŁASNYMI materiałami — nie mutujemy współdzielonego cache
-  // GLTF (README). Zbieramy WSZYSTKIE materiały (sterowanie opacity przy
-  // zanikaniu); emissive dostaje kolor akcentu + siłę 0. transparent=true od
-  // razu, by animacja opacity nie wymagała needsUpdate.
-  const { object, materials } = useMemo(() => {
+  // GLTF (README). Zbieramy materiały (opacity) oraz meshe (przełączanie raycastu).
+  const { object, materials, meshes } = useMemo(() => {
     const object = scene.clone(true);
     const materials: THREE.Material[] = [];
+    const meshes: THREE.Mesh[] = [];
     object.traverse((o) => {
       const mesh = o as THREE.Mesh;
       if (!mesh.isMesh || !mesh.material) return;
+      meshes.push(mesh);
       const cloneOne = (m: THREE.Material) => {
         const c = m.clone();
         c.transparent = true;
@@ -110,7 +115,7 @@ function AssemblyPart({ part, url, hovered, hasVariants, onHover, onUnhover }: A
         ? mesh.material.map(cloneOne)
         : cloneOne(mesh.material);
     });
-    return { object, materials };
+    return { object, materials, meshes };
   }, [scene]);
 
   // Cele wg stanu. Hover-glow tylko poza trybem wyboru. Wysunięcie: wybrana
@@ -141,6 +146,14 @@ function AssemblyPart({ part, url, hovered, hasVariants, onHover, onUnhover }: A
       g.visible = op > 0.01 || opacityTargetRef.current > 0;
       const x = THREE.MathUtils.damp(g.position.x, offsetTargetRef.current, 8, delta);
       if (Math.abs(x - g.position.x) >= 0.00002) g.position.x = x;
+    }
+
+    // Raycast OFF natychmiast gdy część ma się chować — żeby ukryty montaż nie
+    // przechwytywał kliknięć w warianty (opacity 0 nadal jest raycastowalne).
+    const off = opacityTargetRef.current === 0;
+    if (off !== raycastOffRef.current) {
+      raycastOffRef.current = off;
+      for (const m of meshes) m.raycast = off ? NO_RAYCAST : THREE.Mesh.prototype.raycast;
     }
   });
 
@@ -351,6 +364,7 @@ type OrbitLike = { target: THREE.Vector3; update: () => void };
 function CameraRig() {
   const data = useCatalog();
   const selectedPart = useAppStore((s) => s.selectedPart);
+  const focusedVariant = useAppStore((s) => s.focusedVariant);
   const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
   const controls = useThree((s) => s.controls) as OrbitLike | null;
   const tween = useRef<gsap.core.Tween | null>(null);
@@ -364,8 +378,22 @@ function CameraRig() {
     if (selectedPart) {
       const layout = variantRowLayout(data, selectedPart);
       if (layout) {
-        // Część z wariantami → kadrujemy cały rząd (rozpiętość wzdłuż Z = poziom).
-        targetVec = new THREE.Vector3(0, layout.y, 0);
+        // Część z wariantami → origin obrotu na WYBRANYM wariancie (reszta rzędu
+        // zostaje widoczna). Dystans kadruje cały rząd.
+        const focusId = focusedVariant ?? layout.models[0]?.id;
+        const idx = Math.max(
+          0,
+          layout.models.findIndex((m) => m.id === focusId),
+        );
+        const m = layout.models[idx];
+        const c = centerOf(m.bounds);
+        const p = m.pivot;
+        // Środek modelu w świecie: grupa w [0, y, z], wnętrze przesunięte o -pivot.
+        targetVec = new THREE.Vector3(
+          c[0] - p[0],
+          layout.y + (c[1] - p[1]),
+          layout.positionsZ[idx] + (c[2] - p[2]),
+        );
         const vfov = THREE.MathUtils.degToRad(camera.fov);
         const aspect = camera.aspect || 1;
         const fitV = layout.maxHeight / 2 / Math.tan(vfov / 2);
@@ -422,9 +450,25 @@ function CameraRig() {
     return () => {
       tween.current?.kill();
     };
-  }, [selectedPart, data, camera, controls]);
+  }, [selectedPart, focusedVariant, data, camera, controls]);
 
   return null;
+}
+
+// Cień kontaktowy tylko w widoku całego PC (znika przy inspekcji floatującego rzędu).
+function GroundShadow() {
+  const anySelected = useAppStore((s) => s.selectedPart !== null);
+  if (anySelected) return null;
+  return (
+    <ContactShadows
+      position={[0, 0, 0]}
+      opacity={0.45}
+      scale={1.4}
+      blur={2.4}
+      far={1}
+      resolution={1024}
+    />
+  );
 }
 
 export default function ExploreScene() {
@@ -466,14 +510,7 @@ export default function ExploreScene() {
         <Suspense fallback={null}>
           <VariantRow />
         </Suspense>
-        <ContactShadows
-          position={[0, 0, 0]}
-          opacity={0.45}
-          scale={1.4}
-          blur={2.4}
-          far={1}
-          resolution={1024}
-        />
+        <GroundShadow />
       </Suspense>
 
       <OrbitControls
