@@ -1,6 +1,5 @@
 package com.pcworkshop.steps;
 
-import com.pcworkshop.model.Step;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
