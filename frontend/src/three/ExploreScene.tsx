@@ -20,8 +20,6 @@ import type { PartName } from '../data/parts';
 
 // Kolor podświetlenia = token --accent z design systemu.
 const HIGHLIGHT_COLOR = '#F5A524';
-// Siła emissive dla zaznaczonego/wyróżnionego (niższa = subtelniejsze oznaczenie).
-const HIGHLIGHT_SELECTED = 0.16;
 
 // Wyłącza raycast danego mesha (nie dopisuje przecięć).
 const NO_RAYCAST = () => {};
@@ -121,7 +119,8 @@ function AssemblyPart({ part, url, hovered, hasVariants, onHover, onUnhover }: A
   // Cele wg stanu. Hover-glow tylko poza trybem wyboru. Wysunięcie: wybrana
   // część jedzie w X (obudowa w przeciwną stronę). Niezaznaczone, gdy coś jest
   // wybrane → opacity 0 (i potem przestają się renderować).
-  emisTargetRef.current = showExtracted ? HIGHLIGHT_SELECTED : hovered && !anySelected ? 0.22 : 0;
+  // Podświetlenie tylko przy najeżdżaniu (w trybie przeglądu). Wybór nie świeci.
+  emisTargetRef.current = hovered && !anySelected ? 0.22 : 0;
   opacityTargetRef.current = !anySelected || showExtracted ? 1 : 0;
   offsetTargetRef.current = extractOffsetX(part, showExtracted);
 
@@ -244,12 +243,10 @@ function VariantInspectModel({
   model,
   z,
   y,
-  focused,
 }: {
   model: VariantModel;
   z: number;
   y: number;
-  focused: boolean;
 }) {
   const { scene } = useGLTF(modelUrl(model.file));
   const setFocusedVariant = useAppStore((s) => s.setFocusedVariant);
@@ -280,7 +277,7 @@ function VariantInspectModel({
     return { object, materials };
   }, [scene]);
 
-  emisTargetRef.current = focused ? HIGHLIGHT_SELECTED : hovered ? 0.22 : 0;
+  emisTargetRef.current = hovered ? 0.22 : 0;
   useFrame((_, delta) => {
     const emis = THREE.MathUtils.damp(emisRef.current, emisTargetRef.current, 12, delta);
     if (Math.abs(emis - emisRef.current) < 0.0005) return;
@@ -316,7 +313,7 @@ function VariantInspectModel({
       <Html center position={[0, labelY, 0]} distanceFactor={1.2} pointerEvents="none">
         <div
           className={`whitespace-nowrap rounded-md border px-2 py-0.5 font-ui text-xs ${
-            focused
+            hovered
               ? 'border-accent bg-accent text-bg'
               : 'border-border bg-panel/85 text-text-muted'
           }`}
@@ -331,23 +328,13 @@ function VariantInspectModel({
 function VariantRow() {
   const data = useCatalog();
   const selectedPart = useAppStore((s) => s.selectedPart);
-  const focusedVariant = useAppStore((s) => s.focusedVariant);
   const layout = selectedPart ? variantRowLayout(data, selectedPart) : null;
   if (!layout) return null;
-
-  // Brak jawnego wyboru → pierwszy wariant traktujemy jako domyślnie wyróżniony.
-  const focusId = focusedVariant ?? layout.models[0]?.id;
 
   return (
     <>
       {layout.models.map((m, i) => (
-        <VariantInspectModel
-          key={m.file}
-          model={m}
-          z={layout.positionsZ[i]}
-          y={layout.y}
-          focused={m.id === focusId}
-        />
+        <VariantInspectModel key={m.file} model={m} z={layout.positionsZ[i]} y={layout.y} />
       ))}
     </>
   );
