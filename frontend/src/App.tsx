@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, Navigate } from 'react-router-dom';
 import ExploreScene from './three/ExploreScene';
 import PartPanel from './explore/PartPanel';
 import Lamp from './explore/Lamp';
@@ -95,7 +95,7 @@ export default function App() {
         <SmallScreenGate />
       ) : (
         <Routes>
-          <Route path="/" element={<Placeholder title="PC Workshop" owner="start: wybór poziomu + 2 przyciski" />} />
+          <Route path="/" element={<Navigate to="/explore" replace />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/simulation" element={<SimulationEntry />} />
           <Route path="/simulation/step/:n" element={<SimulationStep />} />
