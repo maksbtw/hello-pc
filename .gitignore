@@ -22,3 +22,6 @@ assets/
 # --- env ---
 .env
 .env.*
+
+# --- Editor temporary files ---
+*.swp
