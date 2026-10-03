@@ -22,4 +22,4 @@ fi
 exec "$HOME/.local/bin/llama-server" \
   -m "$model" \
   --n-gpu-layers auto -c 2048 \
-  --host 127.0.0.1 --port 8081
+  --host 0.0.0.0 --port 8081
