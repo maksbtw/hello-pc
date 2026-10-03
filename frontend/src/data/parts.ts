@@ -49,31 +49,13 @@ export const parts: Record<PartName, PartDescription> = {
     ],
     types: [
       {
-        id: 'compact', name: 'Kompaktowa (Mini-ITX)', tagline: 'Mała, oszczędza miejsce i wymaga starannego doboru części.',
+        id: 'mid-tower-atx', name: 'Mid-tower ATX', tagline: 'Standardowa obudowa ATX z miejscem na typowe podzespoły.',
         description: {
-          noob: 'Mała obudowa do niewielkiego komputera. Pasuje do niej mała płyta, a miejsca na duże części jest mniej.',
-          expert: 'Kompaktowa obudowa zwykle obsługuje płyty Mini-ITX; ogranicza przestrzeń na chłodzenie, zasilacz i długość GPU.',
+          noob: 'Popularna obudowa średniej wielkości, przeznaczona do standardowej płyty ATX. Zwykle mieści typową kartę graficzną i chłodzenie.',
+          expert: 'Obudowa mid-tower ATX obsługuje płytę główną ATX; maksymalna długość GPU, wysokość chłodzenia CPU i obsługiwane radiatory zależą od modelu.',
         },
-        facts: ['Kompaktowe obudowy zwykle obsługują płyty Mini-ITX.', 'Wymiary obudowy mogą ograniczać długość GPU i wysokość chłodzenia CPU.'],
-        parameters: { 'Typowa płyta': 'Mini-ITX', 'Priorytet': 'małe wymiary' },
-      },
-      {
-        id: 'mid-tower', name: 'Mid-tower', tagline: 'Uniwersalny rozmiar z miejscem na typowe podzespoły.',
-        description: {
-          noob: 'To popularny, średniej wielkości format. Zwykle mieści standardową płytę i kilka dodatkowych części.',
-          expert: 'Mid-tower najczęściej obsługuje płyty ATX i mniejsze, oferując więcej miejsca na GPU, chłodzenie i wentylatory niż format kompaktowy.',
-        },
-        facts: ['Wiele obudów mid-tower obsługuje płyty ATX, microATX i Mini-ITX.', 'Zgodność wymiarów konkretnej karty i chłodzenia zależy od modelu obudowy.'],
-        parameters: { 'Typowa płyta': 'ATX lub mniejsza', 'Priorytet': 'uniwersalność' },
-      },
-      {
-        id: 'full-tower', name: 'Full-tower', tagline: 'Duża obudowa zapewniająca dużo miejsca na rozbudowę.',
-        description: {
-          noob: 'Duża obudowa, w której łatwiej zmieścić wiele części i duże chłodzenie.',
-          expert: 'Full-tower oferuje dużą przestrzeń montażową i zwykle obsługuje płyty ATX oraz większe formaty; szczegóły zależą od modelu.',
-        },
-        facts: ['Większa obudowa nie gwarantuje lepszego chłodzenia bez odpowiedniego przepływu powietrza.', 'Maksymalne wymiary komponentów trzeba sprawdzić w specyfikacji obudowy.'],
-        parameters: { 'Typowa płyta': 'ATX lub większa', 'Priorytet': 'miejsce na rozbudowę' },
+        facts: ['Obudowa mid-tower ATX jest przeznaczona do montażu płyty głównej ATX.', 'Maksymalna długość karty graficznej i wysokość chłodzenia CPU zależą od modelu obudowy.', 'Miejsca na wentylatory i radiatory zależą od modelu obudowy.'],
+        parameters: { 'Typ obudowy': 'mid-tower', 'Obsługiwany format płyty': 'ATX', 'Zgodność komponentów': 'sprawdź maksymalne wymiary podane przez producenta' },
       },
     ],
   },
