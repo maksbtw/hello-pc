@@ -6,7 +6,6 @@ import { useAppStore } from '../store/useAppStore';
 import { stepMeta } from '../data/steps';
 import SimShell from './SimShell';
 import {
-  MouseStepView,
   SsdStepView,
   RamStepView,
   CpuDecodeStepView,
@@ -15,13 +14,11 @@ import {
   DisplayStepView,
 } from './stepViews';
 
-const TOTAL = 7;
+const TOTAL = stepMeta.length;
 const AUTO_MS = 3200;
 
 function renderView(step: Step) {
   switch (step.id) {
-    case 'mouse':
-      return <MouseStepView step={step} />;
     case 'ssd':
       return <SsdStepView step={step} />;
     case 'ram':
@@ -91,8 +88,11 @@ export default function SimulationStep() {
   // Wejście bez danych (np. odświeżenie) → powrót na start.
   if (!valid) return <Navigate to="/simulation" replace />;
 
-  const step = response!.steps[index - 1];
+  // Krok z odpowiedzi dobieramy po id (odpowiedź wciąż ma 7 kroków z backendu;
+  // kolejność UI bierze się z stepMeta, więc dopasowujemy po identyfikatorze).
   const meta = stepMeta[index - 1];
+  const step = response!.steps.find((s) => s.id === meta.id);
+  if (!step) return <Navigate to="/simulation" replace />;
 
   return (
     <SimShell

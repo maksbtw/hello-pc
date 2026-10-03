@@ -1,9 +1,20 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 
 import { FALLBACK_BANNER } from '../api/client';
-import { stepMeta, type StepMeta } from '../data/steps';
+import { stepMeta, type IconKey, type StepMeta } from '../data/steps';
 import { useAppStore } from '../store/useAppStore';
+import Scene from '../three/Scene';
 import { ComponentIcon } from './ui';
+
+// Domyślny model .glb na podzespół (z katalogu Maxa). Mysz usunięta z kroków.
+const STEP_MODEL: Record<IconKey, string> = {
+  mouse: '',
+  ssd: 'ssd.glb',
+  ram: 'ram-ddr4.glb',
+  cpu: 'cpu.glb',
+  gpu: 'gpu.glb',
+  monitor: 'monitor-ips.glb',
+};
 
 /** Powłoka ekranu symulacji wg template'u z Figmy:
  *  górny pasek + pasek 7 kroków + układ (lewa karta | scena + opis) + dolny pasek. */
@@ -159,34 +170,6 @@ function StepRail({
   );
 }
 
-function StageCard({ meta }: { meta: StepMeta }) {
-  return (
-    <div className="relative overflow-hidden rounded-lg border border-border bg-bg2 p-5">
-      <span className="absolute left-4 top-4 inline-flex items-center rounded-pill border border-accent/50 bg-accent/10 px-2.5 py-0.5 font-mono text-xs text-accent">
-        Tu się to dzieje
-      </span>
-      <div className="flex h-40 items-center justify-center">
-        <div
-          className="text-text-soft"
-          style={{ filter: 'drop-shadow(0 0 24px rgba(255,223,170,0.25))' }}
-        >
-          <ComponentIcon icon={meta.icon} className="h-20 w-20" />
-        </div>
-      </div>
-      <div className="font-ui text-md text-text">{meta.stageLabel}</div>
-    </div>
-  );
-}
-
-function DescriptionCard({ meta }: { meta: StepMeta }) {
-  return (
-    <div className="rounded-lg border border-border bg-surface p-5">
-      <h2 className="font-heading text-lg text-text-bright">{meta.title}</h2>
-      <p className="mt-3 font-ui text-base text-text-muted">{meta.description}</p>
-    </div>
-  );
-}
-
 export default function SimShell({
   index,
   total,
@@ -224,34 +207,42 @@ export default function SimShell({
         </div>
       )}
 
-      <div
-        key={index}
-        className={`grid flex-1 grid-cols-[1.9fr_1fr] gap-5 overflow-y-auto overflow-x-hidden px-16 py-5 sim-step-enter ${
-          back ? 'sim-step-enter--back' : ''
-        }`}
-      >
-        {/* lewa karta: nagłówek + ciało kroku */}
-        <section className="flex flex-col rounded-lg border border-border bg-surface p-6">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="font-mono text-xs uppercase tracking-upper text-text-dim">
-                Krok {index} z {total} · {meta.component}
-              </p>
-              <h1 className="mt-1 font-heading text-2xl text-text-bright">{meta.title}</h1>
+      <div className="grid flex-1 grid-cols-[1.9fr_1fr] gap-5 overflow-y-auto overflow-x-hidden px-16 py-5">
+        {/* lewa karta: nagłówek + ciało kroku (animuje się przy zmianie kroku) */}
+        <section className="flex flex-col overflow-hidden rounded-lg border border-border bg-surface p-6">
+          <div
+            key={index}
+            className={`flex flex-1 flex-col ${back ? 'sim-step-enter sim-step-enter--back' : 'sim-step-enter'}`}
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="font-mono text-xs uppercase tracking-upper text-text-dim">
+                  Krok {index} z {total} · {meta.component}
+                </p>
+                <h1 className="mt-1 font-heading text-2xl text-text-bright">{meta.title}</h1>
+              </div>
+              {text && (
+                <span className="rounded-md border border-border bg-bg2 px-3 py-1.5 font-mono text-sm text-text-muted">
+                  tekst: <span className="text-data-text">„{text}"</span>
+                </span>
+              )}
             </div>
-            {text && (
-              <span className="rounded-md border border-border bg-bg2 px-3 py-1.5 font-mono text-sm text-text-muted">
-                tekst: <span className="text-data-text">„{text}"</span>
-              </span>
-            )}
+            <div className="mt-8 flex-1">{children}</div>
           </div>
-          <div className="mt-8 flex-1">{children}</div>
         </section>
 
-        {/* prawa kolumna: scena + opis */}
-        <aside className="flex flex-col gap-5">
-          <StageCard meta={meta} />
-          <DescriptionCard meta={meta} />
+        {/* prawa kolumna: model 3D (bez ramki, obracalny) + sam tekst na dole */}
+        <aside className="flex min-h-0 flex-col">
+          <div className="relative min-h-0 flex-1">
+            <span className="absolute left-0 top-0 z-10 inline-flex items-center rounded-pill border border-accent/50 bg-accent/10 px-2.5 py-0.5 font-mono text-xs text-accent">
+              Tu się to dzieje
+            </span>
+            <Scene modelUrl={`/models/${STEP_MODEL[meta.icon]}`} />
+          </div>
+          <div className="mt-4">
+            <h2 className="font-heading text-lg text-text-bright">{meta.title}</h2>
+            <p className="mt-2 font-ui text-base text-text-muted">{meta.description}</p>
+          </div>
         </aside>
       </div>
 

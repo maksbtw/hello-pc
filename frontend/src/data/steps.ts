@@ -14,15 +14,6 @@ export interface StepMeta {
 
 export const stepMeta: StepMeta[] = [
   {
-    id: 'mouse',
-    title: 'Kliknięcie',
-    component: 'Mysz',
-    stageLabel: 'Mysz',
-    icon: 'mouse',
-    description:
-      'Klikasz przycisk myszy. Mysz wysyła do komputera krótką wiadomość: który przycisk wciśnięto i czy się poruszyła.',
-  },
-  {
     id: 'ssd',
     title: 'Odczyt z dysku',
     component: 'SSD',
