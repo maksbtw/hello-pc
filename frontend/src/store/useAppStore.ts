@@ -14,6 +14,8 @@ interface AppState {
 
   /** Zaznaczona część w scenie 3D (Explore). null = nic nie wybrano. */
   selectedPart: PartName | null;
+  /** Podświetlony/opisywany wariant w rzędzie inspekcji. null = brak/domyślny. */
+  focusedVariant: string | null;
 
   setLevel: (level: Level) => void;
   setText: (text: string) => void;
@@ -22,6 +24,7 @@ interface AppState {
   setUsedFallback: (on: boolean) => void;
   /** Styk sceny 3D (Max) → panel (Anton). Zamrożony kontrakt wg PLAN.md. */
   setSelectedPart: (part: PartName | null) => void;
+  setFocusedVariant: (id: string | null) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -31,11 +34,14 @@ export const useAppStore = create<AppState>((set) => ({
   currentStep: 1,
   usedFallback: false,
   selectedPart: null,
+  focusedVariant: null,
 
   setLevel: (level) => set({ level }),
   setText: (text) => set({ text }),
   setResponse: (response) => set({ response }),
   setCurrentStep: (currentStep) => set({ currentStep }),
   setUsedFallback: (usedFallback) => set({ usedFallback }),
-  setSelectedPart: (selectedPart) => set({ selectedPart }),
+  // Zmiana części resetuje podświetlony wariant.
+  setSelectedPart: (selectedPart) => set({ selectedPart, focusedVariant: null }),
+  setFocusedVariant: (focusedVariant) => set({ focusedVariant }),
 }));

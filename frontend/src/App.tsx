@@ -69,7 +69,11 @@ function Placeholder({ title, owner }: { title: string; owner: string }) {
 function Explore() {
   return (
     <div className="relative h-full w-full">
-      <ExploreScene />
+      {/* Canvas kończy się przed panelem (360px + 16px margines + 16px odstęp),
+          żeby model był wyśrodkowany w widocznym obszarze, nie pod panelem. */}
+      <div className="absolute inset-y-0 left-0 right-[392px]">
+        <ExploreScene />
+      </div>
       <nav className="absolute left-4 top-4 flex gap-4 font-ui text-sm text-accent">
         <Link to="/">← Start</Link>
       </nav>
