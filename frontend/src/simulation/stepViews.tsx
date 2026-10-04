@@ -247,17 +247,18 @@ export function MouseStepView({ step }: { step: MouseStep }) {
 }
 
 /* 2 · SSD — słowo wielkimi literami, z każdej litery strzałka do jej bajtów */
-export function SsdStepView({ step, meta }: { step: SsdStep; meta: StepMeta }) {
+export function SsdStepView({ meta }: { step: SsdStep; meta: StepMeta }) {
   const text = useAppStore((s) => s.text);
   const chars = [...(text || 'Hello')];
   const enc = new TextEncoder();
+  const byteCount = enc.encode(text || 'Hello').length;
 
   const graphic = (
     <div className="flex flex-wrap items-center justify-center gap-3">
       <FlowCard
         icon={<FileIcon />}
         title="program"
-        subtitle={`plik na dysku SSD · ${step.bytes.length} bajtów`}
+        subtitle={`plik na dysku SSD · ${byteCount} bajtów`}
       />
       <ArrowRight />
       <FlowCard icon={<BlocksIcon />} title="odczyt bloków" subtitle="kontroler czyta sektory" />

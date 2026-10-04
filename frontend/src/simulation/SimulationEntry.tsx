@@ -16,9 +16,11 @@ import './simulation.css';
 
 const MAX = 12;
 
-// Jak długo lampa jest zgaszona po wysłaniu (minimum), i jak długo świeci przed skokiem.
+// Jak długo lampa jest zgaszona po wysłaniu (minimum), ile świeci zanim ekran
+// zacznie znikać, i jak długo trwa samo „wciągnięcie" w światło.
 const OFF_MS = 1200;
-const ON_MS = 1000;
+const ON_HOLD_MS = 450;
+const EXIT_MS = 700;
 
 export default function SimulationEntry() {
   const navigate = useNavigate();
@@ -29,6 +31,7 @@ export default function SimulationEntry() {
 
   const [value, setValue] = useState('');
   const [status, setStatus] = useState<LampStatus>('idle');
+  const [leaving, setLeaving] = useState(false);
 
   // Liczymy code pointy, nie .length — "👋" to 1 znak, ale 2 jednostki UTF-16.
   const count = [...value].length;
@@ -54,18 +57,22 @@ export default function SimulationEntry() {
     setCurrentStep(1);
     setUsedFallback(usedFallback);
 
-    // Trzymaj zgaszone min. OFF_MS, potem zapal i po ON_MS wejdź w krok 1.
+    // Trzymaj zgaszone min. OFF_MS, zapal lampę, przytrzymaj, a potem „wciągnij"
+    // ekran w światło (fade+zoom) i dopiero wejdź w krok 1.
     const wait = Math.max(0, OFF_MS - (Date.now() - t0));
     window.setTimeout(() => {
       setStatus('on');
-      window.setTimeout(() => navigate('/simulation/step/1'), ON_MS);
+      window.setTimeout(() => {
+        setLeaving(true);
+        window.setTimeout(() => navigate('/simulation/step/1'), EXIT_MS);
+      }, ON_HOLD_MS);
     }, wait);
   }
 
   const busy = status !== 'idle';
 
   return (
-    <div className="relative flex h-full">
+    <div className={`relative flex h-full ${leaving ? 'sim-entry--leaving' : ''}`}>
       {/* lewa: tekst + formularz */}
       <div className="flex w-1/2 flex-col justify-center px-16">
         <div className="w-full max-w-md">

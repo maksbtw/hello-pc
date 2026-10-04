@@ -89,7 +89,7 @@ export default function App() {
   const isDesktop = useIsDesktop();
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full overflow-hidden">
       <LampBackground />
       {!isDesktop ? (
         <SmallScreenGate />

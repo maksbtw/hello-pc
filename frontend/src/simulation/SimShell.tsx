@@ -1,9 +1,7 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 
-import { FALLBACK_BANNER } from '../api/client';
 import { parts } from '../data/parts';
 import { stepMeta, type IconKey, type StepMeta } from '../data/steps';
-import { useAppStore } from '../store/useAppStore';
 import Scene from '../three/Scene';
 import { ComponentIcon } from './ui';
 
@@ -17,16 +15,27 @@ const STEP_MODEL: Record<IconKey, string> = {
   monitor: 'monitor-ips.glb',
 };
 
-// Domyślna orientacja każdego modelu (radiany), by „dobra" strona była na starcie
-// (np. karta graficzna wentylatorami do góry, monitor ekranem do przodu).
-const TAU = Math.PI * 2;
+// Korekta osi modelu (radiany) — zwykle 0; zostawione na wypadek modelu
+// wymagającego obrotu zanim zadziała kamera.
 const STEP_MODEL_ROTATION: Record<IconKey, [number, number, number]> = {
   mouse: [0, 0, 0],
   ssd: [0, 0, 0],
   ram: [0, 0, 0],
-  cpu: [-TAU / 4, 0, 0],
-  gpu: [TAU / 2, 0, 0],
-  monitor: [0, TAU / 2, 0],
+  cpu: [0, 0, 0],
+  gpu: [0, 0, 0],
+  monitor: [0, 0, 0],
+};
+
+// Domyślny widok (pozycja kamery + target) każdego modelu — ustawiany tak,
+// by na starcie widać było „dobrą" stronę. Wartości z pcView() w DevTools.
+// CAM bazowe to [2, 1.4, 2.4]; brak wpisu → ten domyślny widok.
+type View = { camera: [number, number, number]; target: [number, number, number] };
+const STEP_MODEL_VIEW: Partial<Record<IconKey, View>> = {
+  ssd: { camera: [2.537, -0.574, -2.225], target: [0, 0, 0] },
+  ram: { camera: [-1.936, -0.712, 2.732], target: [0, 0, 0] },
+  cpu: { camera: [2.541, -0.549, -2.227], target: [0, 0, 0] },
+  gpu: { camera: [-1.556, -1.504, 2.653], target: [0, 0, 0] },
+  monitor: { camera: [-1.933, 0.579, -2.765], target: [0, 0, 0] },
 };
 
 /** Powłoka ekranu symulacji wg template'u z Figmy:
@@ -161,8 +170,6 @@ function StepRail({ index, onSelect }: { index: number; onSelect: (n: number) =>
 }
 
 export default function SimShell({ index, meta, onPrev, onNext, onSelect, children }: Props) {
-  const usedFallback = useAppStore((s) => s.usedFallback);
-
   // Kierunek przejścia: dalej → wjazd z prawej, wstecz → z lewej.
   const prevIndexRef = useRef(index);
   const back = index < prevIndexRef.current;
@@ -171,19 +178,12 @@ export default function SimShell({ index, meta, onPrev, onNext, onSelect, childr
   }, [index]);
 
   return (
-    <div className="relative flex h-full flex-col">
+    <div className="sim-shell-enter relative flex h-full flex-col">
       <TopBar />
       <StepRail index={index} onSelect={onSelect} />
 
       <EdgeArrow dir="left" onClick={onPrev} label="Poprzedni krok" disabled={index === 1} />
       <EdgeArrow dir="right" onClick={onNext} label="Następny krok" />
-
-      {usedFallback && (
-        <div className="mx-16 flex items-center gap-2 rounded-md border border-state-warning/40 bg-state-warning/10 px-4 py-2 font-ui text-sm text-state-warning">
-          <span aria-hidden>⚠</span>
-          <span>{FALLBACK_BANNER}</span>
-        </div>
-      )}
 
       <div className="grid flex-1 grid-cols-[1.9fr_1fr] gap-5 overflow-y-auto overflow-x-hidden px-16 py-5">
         {/* lewa karta: nagłówek + ciało kroku (animuje się przy zmianie kroku) */}
@@ -202,6 +202,7 @@ export default function SimShell({ index, meta, onPrev, onNext, onSelect, childr
             <Scene
               modelUrl={`/models/${STEP_MODEL[meta.icon]}`}
               rotation={STEP_MODEL_ROTATION[meta.icon]}
+              view={STEP_MODEL_VIEW[meta.icon]}
             />
           </div>
           <div className="mt-4">
