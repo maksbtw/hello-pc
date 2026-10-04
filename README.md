@@ -1,5 +1,59 @@
 # PC Workshop
 
+## Quick start (Linux and macOS)
+
+Install and start **Docker with Docker Compose** and install **[Homebrew](https://brew.sh/)**
+if you do not already have them. Download or clone this repository and open a terminal
+in its root folder (the folder containing `compose.yaml`). No local Node.js, Java,
+or Maven installation is needed for this Docker setup.
+
+**1. Set up the local AI once.** This installs llama.cpp, connects its server binary
+to the path expected by our launcher, and downloads the default Qwen3 model (~5 GB):
+
+```bash
+brew install llama.cpp
+mkdir -p "$HOME/.local/bin" "$HOME/.local/share/llama.cpp/models"
+if [ ! -e "$HOME/.local/bin/llama-server" ] && [ ! -L "$HOME/.local/bin/llama-server" ]; then
+  ln -s "$(command -v llama-server)" "$HOME/.local/bin/llama-server"
+fi
+curl -fL --retry 3 \
+  -o "$HOME/.local/share/llama.cpp/models/Qwen3-8B-Q4_K_M.gguf" \
+  "https://huggingface.co/Qwen/Qwen3-8B-GGUF/resolve/main/Qwen3-8B-Q4_K_M.gguf"
+```
+
+Homebrew supports both Linux and macOS. See the
+[llama.cpp installation guide](https://github.com/ggml-org/llama.cpp/blob/master/docs/install.md)
+and [official model files](https://huggingface.co/Qwen/Qwen3-8B-GGUF/tree/main).
+Allow additional memory for inference and Docker; the model file size is not the
+total memory requirement. The first setup and Docker build require internet access.
+
+**2. Start the local AI** from the project root:
+
+```bash
+./scripts/run-local-llama.sh
+```
+
+Wait until the model finishes loading and keep this terminal open.
+
+**3. In a second terminal, start the application** from the project root:
+
+```bash
+docker compose up --build -d
+```
+
+Open **[http://localhost:5174](http://localhost:5174)** once the services have started.
+The backend runs on port `8080` and the local AI server on port `8081`.
+These ports and `5174` must be available. The launcher binds the AI server to
+`0.0.0.0` so Docker can reach it on Linux; this also makes it reachable from your network.
+
+For later runs, repeat only steps **2–3**. After the model and Docker images are
+downloaded and built, the application can run offline.
+
+To stop the application, run `docker compose down`, then press **Ctrl+C** in the
+AI terminal. For application logs, run `docker compose logs -f`.
+
+---
+
 Interaktywna encyklopedia 3D komputera z lokalnym AI. Klikasz część, wybierasz jej typ,
 czytasz opis na swoim poziomie, a AI odpowiada na pytania wyłącznie na podstawie
 naszej kuratorowanej wiedzy (bez zmyślania).
