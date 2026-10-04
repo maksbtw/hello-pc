@@ -8,6 +8,8 @@ import SimulationEntry from './simulation/SimulationEntry';
 import SimulationStep from './simulation/SimulationStep';
 import SimulationDone from './simulation/SimulationDone';
 
+import TopBar from './components/TopBar';
+
 /**
  * Szkielet aplikacji: bramka szerokości ekranu, tło "lampa" i trasy-placeholdery.
  * Każdy członek zespołu rozbudowuje swoją część — tu jest tylko miejsce startowe.
@@ -56,11 +58,8 @@ function Placeholder({ title, owner }: { title: string; owner: string }) {
       <h1 className="font-heading text-3xl text-text">{title}</h1>
       <p className="mt-2 font-ui text-sm text-text-faint">TODO — {owner}</p>
       <nav className="mt-6 flex flex-wrap gap-4 font-ui text-sm text-accent">
-        <Link to="/">/</Link>
         <Link to="/explore">/explore</Link>
         <Link to="/simulation">/simulation</Link>
-        <Link to="/simulation/step/1">/simulation/step/1</Link>
-        <Link to="/simulation/done">/simulation/done</Link>
       </nav>
     </section>
   );
@@ -77,9 +76,6 @@ function Explore() {
         <Lamp />
         <ExploreScene />
       </div>
-      <nav className="absolute left-4 top-4 flex gap-4 font-ui text-sm text-accent">
-        <Link to="/">← Start</Link>
-      </nav>
       <PartPanel />
     </div>
   );
@@ -89,19 +85,25 @@ export default function App() {
   const isDesktop = useIsDesktop();
 
   return (
-    <div className="relative h-full overflow-hidden">
+    <div className="relative flex h-full flex-col">
       <LampBackground />
       {!isDesktop ? (
         <SmallScreenGate />
       ) : (
-        <Routes>
-          <Route path="/" element={<Navigate to="/explore" replace />} />
-          <Route path="/explore" element={<Explore />} />
-          <Route path="/simulation" element={<SimulationEntry />} />
-          <Route path="/simulation/step/:n" element={<SimulationStep />} />
-          <Route path="/simulation/done" element={<SimulationDone />} />
-          <Route path="*" element={<Placeholder title="404" owner="nieznana trasa" />} />
-        </Routes>
+        <>
+          {/* Globalny nagłówek — widoczny na każdej trasie. */}
+          <TopBar />
+          <div className="relative min-h-0 flex-1 overflow-hidden">
+            <Routes>
+              <Route path="/" element={<Navigate to="/explore" replace />} />
+              <Route path="/explore" element={<Explore />} />
+              <Route path="/simulation" element={<SimulationEntry />} />
+              <Route path="/simulation/step/:n" element={<SimulationStep />} />
+              <Route path="/simulation/done" element={<SimulationDone />} />
+              <Route path="*" element={<Placeholder title="404" owner="nieznana trasa" />} />
+            </Routes>
+          </div>
+        </>
       )}
     </div>
   );

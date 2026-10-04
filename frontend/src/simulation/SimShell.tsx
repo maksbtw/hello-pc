@@ -50,15 +50,6 @@ interface Props {
   children: ReactNode; // ciało lewej karty (widok kroku)
 }
 
-function TopBar() {
-  return (
-    <header className="flex items-center gap-2 px-6 py-3">
-      <span className="text-accent">✦</span>
-      <span className="font-heading text-md text-text-bright">PC Workshop</span>
-    </header>
-  );
-}
-
 function EdgeArrow({
   dir,
   onClick,
@@ -179,7 +170,6 @@ export default function SimShell({ index, meta, onPrev, onNext, onSelect, childr
 
   return (
     <div className="sim-shell-enter relative flex h-full flex-col">
-      <TopBar />
       <StepRail index={index} onSelect={onSelect} />
 
       <EdgeArrow dir="left" onClick={onPrev} label="Poprzedni krok" disabled={index === 1} />
