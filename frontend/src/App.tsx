@@ -58,11 +58,8 @@ function Placeholder({ title, owner }: { title: string; owner: string }) {
       <h1 className="font-heading text-3xl text-text">{title}</h1>
       <p className="mt-2 font-ui text-sm text-text-faint">TODO — {owner}</p>
       <nav className="mt-6 flex flex-wrap gap-4 font-ui text-sm text-accent">
-        <Link to="/">/</Link>
         <Link to="/explore">/explore</Link>
         <Link to="/simulation">/simulation</Link>
-        <Link to="/simulation/step/1">/simulation/step/1</Link>
-        <Link to="/simulation/done">/simulation/done</Link>
       </nav>
     </section>
   );
