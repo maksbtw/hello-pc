@@ -96,7 +96,8 @@ Neutral near-black graphite, a dark green-gray accent like a circuit board, cold
 
 ### Fonts
 
-**Outfit** (headings, weight 600) · **Inter** (UI) · **JetBrains Mono** (code, bytes). Self-hosted.
+**Outfit** (headings, weight 600) · **Cabinet Grotesk** (UI, loaded from Fontshare) ·
+**Azeret Mono** (code, bytes). Outfit and Azeret Mono are self-hosted.
 
 ### Consistency rules
 

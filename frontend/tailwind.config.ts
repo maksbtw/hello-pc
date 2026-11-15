@@ -71,8 +71,8 @@ export default {
 
       fontFamily: {
         heading: ['"Outfit Variable"', 'sans-serif'], // headings (semibold by default, see index.css)
-        ui: ['Inter', 'sans-serif'], // tekst / UI
-        mono: ['"JetBrains Mono"', 'monospace'], // kod / bajty
+        ui: ['"Cabinet Grotesk"', 'sans-serif'], // text / UI (sized up in index.css)
+        mono: ['"Azeret Mono Variable"', 'monospace'], // code / bytes
       },
 
       // Skala typografii z Figmy (rozmiar + domyślny line-height).
@@ -89,10 +89,11 @@ export default {
         display: ['88px', { lineHeight: '92px' }],
       },
 
+      // Cabinet Grotesk runs light, so every UI weight sits one step heavier than its name.
       fontWeight: {
-        normal: '400',
-        medium: '500',
-        semibold: '600',
+        normal: '500',
+        medium: '700',
+        semibold: '800',
       },
 
       letterSpacing: {

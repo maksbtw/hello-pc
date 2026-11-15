@@ -70,8 +70,8 @@
 
   /* Rodziny czcionek */
   --font-heading: 'Outfit Variable', sans-serif;
-  --font-ui: Inter, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-ui: 'Cabinet Grotesk', sans-serif;
+  --font-mono: 'Azeret Mono Variable', monospace;
 }
 
 html,
@@ -85,6 +85,10 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-ui);
+  font-weight: 500;
+  /* Cabinet Grotesk has small lowercase letters: scale it so its x-height is about Inter's,
+     which makes all UI text bigger without touching the size scale. */
+  font-size-adjust: 0.56;
 }
 
 ::selection {
@@ -95,6 +99,19 @@ body {
   /* Headings are semibold by default; an explicit font-* weight utility still wins. */
   .font-heading {
     font-weight: 600;
+  }
+
+  /* The size boost above is for the UI font only. */
+  .font-heading,
+  .font-mono {
+    font-size-adjust: none;
+  }
+
+  /* Azeret Mono's contextual alternates turn "0x21" into "0×21": keep hex readable. */
+  .font-mono {
+    font-weight: 400;
+    font-variant-ligatures: none;
+    font-feature-settings: 'calt' 0;
   }
 
   /* Glass material: translucent, blurred, thin light edge on top, soft shadow.

@@ -3,7 +3,6 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { parts } from '../data/parts';
 import { stepMeta, type IconKey, type StepMeta } from '../data/steps';
 import Scene from '../three/Scene';
-import { ComponentIcon } from './ui';
 
 // Domyślny model .glb na podzespół (z katalogu Maxa). Mysz usunięta z kroków.
 const STEP_MODEL: Record<IconKey, string> = {
@@ -119,7 +118,7 @@ function StepRail({ index, onSelect }: { index: number; onSelect: (n: number) =>
 
       {/* Karuzela: cały tor przesuwa się tak, by bieżący krok był na środku.
           Sąsiednie tytuły płynnie wjeżdżają/zjeżdżają i zmieniają skalę. */}
-      <div className="relative mt-3 h-[76px] w-full overflow-hidden">
+      <div className="relative mt-3 h-12 w-full overflow-hidden">
         <div
           className="absolute left-1/2 top-0 flex transition-transform duration-500 ease-out"
           style={{ transform: `translateX(${-(active * SLOT + SLOT / 2)}px)` }}
@@ -146,10 +145,6 @@ function StepRail({ index, onSelect }: { index: number; onSelect: (n: number) =>
                   <h2 className="whitespace-nowrap font-heading text-3xl text-text-bright">
                     {m.title}
                   </h2>
-                  <span className="mt-1 flex items-center gap-1.5 font-mono text-base text-text-muted">
-                    <ComponentIcon icon={m.icon} className="h-4 w-4" />
-                    {m.component}
-                  </span>
                 </div>
               </button>
             );
