@@ -93,12 +93,12 @@ export default function SimulationEntry() {
               autoFocus
               spellCheck={false}
               aria-label="Tekst do symulacji"
-              className="w-full rounded-md border border-border bg-surface px-5 py-4 font-mono text-xl text-text placeholder:text-text-faint focus:border-accent focus:outline-none disabled:opacity-60"
+              className="w-full glass-inner rounded-lg border border-transparent px-5 py-4 font-mono text-xl text-text placeholder:text-text-faint focus:border-accent-ink/60 focus:outline-none disabled:opacity-60"
             />
 
             <div className="flex w-full items-center justify-between font-mono text-sm text-text-dim">
               <span>{busy ? 'przetwarzam…' : 'maks. 12 znaków'}</span>
-              <span className={count === MAX ? 'text-accent' : ''}>
+              <span className={count === MAX ? 'text-accent-ink' : ''}>
                 {count}/{MAX}
               </span>
             </div>
@@ -106,7 +106,7 @@ export default function SimulationEntry() {
             <button
               type="submit"
               disabled={!canSubmit}
-              className="mt-4 self-start rounded-md bg-accent px-8 py-3 font-ui font-semibold text-bg transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
+              className="mt-4 self-start rounded-md bg-accent px-8 py-3 font-ui font-semibold text-accent-on shadow-edge transition-colors hover:bg-accent-bright disabled:cursor-not-allowed disabled:opacity-40"
             >
               {status === 'idle' ? 'Wyślij' : status === 'off' ? 'Wysyłam…' : 'Gotowe'}
             </button>

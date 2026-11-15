@@ -37,7 +37,7 @@ function StepLayout({
     <div className="relative flex h-full flex-col">
       {/* numer kroku rzymski (prawy górny róg) */}
       <span
-        className="absolute right-0 top-0 text-5xl leading-none text-accent/60"
+        className="absolute right-0 top-0 text-5xl leading-none text-accent-ink/60"
         style={{ fontFamily: 'Georgia, "Times New Roman", "Noto Serif", serif' }}
       >
         {ROMAN[stepNo - 1] ?? stepNo}
@@ -63,13 +63,13 @@ function StepLayout({
 }
 
 function ArrowRight() {
-  return <span className="text-xl text-accent">→</span>;
+  return <span className="text-xl text-accent-ink">→</span>;
 }
 
 function ArrowDown({ label }: { label?: string }) {
   return (
     <div className="flex items-center gap-3 text-text-dim">
-      <svg width="16" height="26" viewBox="0 0 16 26" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-accent/70">
+      <svg width="16" height="26" viewBox="0 0 16 26" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-accent-ink/70">
         <line x1="8" y1="2" x2="8" y2="19" strokeLinecap="round" />
         <path d="M3 14 L8 20 L13 14" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
@@ -415,7 +415,7 @@ export function CpuDecodeStepView({ meta }: { step: CpuDecodeStep; meta: StepMet
                 {ins.asm}
               </span>
               <span
-                className={`inline-flex items-center rounded-pill border border-accent/50 bg-accent/10 px-2.5 py-0.5 font-mono text-xs text-accent transition-opacity duration-700 ease-in-out ${
+                className={`inline-flex items-center rounded-pill border border-accent-ink/40 bg-accent px-2.5 py-0.5 font-mono text-xs text-accent-ink transition-opacity duration-700 ease-in-out ${
                   current ? 'opacity-100' : 'opacity-0'
                 }`}
               >
@@ -727,7 +727,7 @@ export function DisplayStepView({ meta }: { step: DisplayStep; meta: StepMeta })
         <div className="flex flex-col items-center" style={{ transform: 'scale(1.2)', transformOrigin: 'center' }}>
           {/* ekran monitora — proporcje jak prawdziwy ekran (tekst wyśrodkowany) */}
           <div
-            className="relative flex items-center justify-center overflow-hidden rounded-xl border-4 border-surface bg-black shadow-[0_0_40px_rgba(96,165,250,0.18)]"
+            className="relative flex items-center justify-center overflow-hidden rounded-lg border-4 border-surface bg-black shadow-[0_0_40px_rgba(96,165,250,0.18)]"
             style={{ width: screenW, height: screenH }}
           >
             <div className="relative" style={{ width: gridW, height: gridH }}>

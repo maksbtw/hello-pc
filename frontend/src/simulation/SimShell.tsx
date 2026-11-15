@@ -69,7 +69,7 @@ function EdgeArrow({
       aria-label={label}
       className={`absolute top-1/2 z-20 -translate-y-1/2 transition ${
         dir === 'left' ? 'left-3' : 'right-3'
-      } ${disabled ? 'cursor-not-allowed text-text-faint/25' : 'text-accent/70 hover:text-accent'}`}
+      } ${disabled ? 'cursor-not-allowed text-text-faint/25' : 'text-accent-ink/70 hover:text-accent-ink'}`}
     >
       <svg
         width="44"
@@ -97,7 +97,7 @@ function StepDots({ index, total }: { index: number; total: number }) {
           <span
             key={n}
             className={`h-1.5 rounded-pill transition-all duration-300 ease-out ${
-              active ? 'w-5 bg-accent' : 'w-1.5 bg-text-faint/50'
+              active ? 'w-5 bg-accent-ink' : 'w-1.5 bg-text-faint/50'
             }`}
           />
         );
@@ -177,7 +177,7 @@ export default function SimShell({ index, meta, onPrev, onNext, onSelect, childr
 
       <div className="grid flex-1 grid-cols-[1.9fr_1fr] gap-5 overflow-y-auto overflow-x-hidden px-16 py-5">
         {/* lewa karta: nagłówek + ciało kroku (animuje się przy zmianie kroku) */}
-        <section className="flex flex-col overflow-hidden rounded-lg border border-border bg-surface p-6">
+        <section className="glass flex flex-col overflow-hidden rounded-xl p-6">
           <div
             key={index}
             className={`flex flex-1 flex-col ${back ? 'sim-step-enter sim-step-enter--back' : 'sim-step-enter'}`}

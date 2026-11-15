@@ -15,20 +15,20 @@ export default function SimulationDone() {
     <div className="flex h-full flex-col items-center justify-center gap-6 p-8 text-center">
       <h1 className="font-heading text-h2 text-text-bright">Gotowe</h1>
       <p className="max-w-md font-ui text-md text-text-muted">
-        Twój tekst {text ? <span className="font-mono text-accent">„{text}"</span> : null} przebył
+        Twój tekst {text ? <span className="font-mono text-accent-ink">„{text}"</span> : null} przebył
         całą drogę przez komputer — od klawisza po piksele.
       </p>
 
       <div className="mt-2 flex gap-4 font-ui text-sm">
         <button
           onClick={() => navigate('/simulation')}
-          className="rounded-md bg-accent px-6 py-3 font-semibold text-bg hover:bg-accent-hover"
+          className="rounded-md bg-accent px-6 py-3 font-semibold text-accent-on shadow-edge hover:bg-accent-bright"
         >
           Spróbuj ponownie
         </button>
         <button
           onClick={() => navigate('/explore')}
-          className="rounded-md border border-border px-6 py-3 text-text-muted hover:border-border-strong hover:text-text"
+          className="glass-inner rounded-md px-6 py-3 text-text-muted hover:text-text"
         >
           Przejdź do Demo
         </button>

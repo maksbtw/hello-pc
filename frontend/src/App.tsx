@@ -22,9 +22,12 @@ function LampBackground() {
       aria-hidden
       className="pointer-events-none fixed inset-0 -z-10"
       style={{
+        // Cold lamp glow from the top, a faint PCB dot grid (gives the glass
+        // something to blur) and a vignette on the edges.
         background:
-          'radial-gradient(60% 40% at 50% 0%, rgba(255,217,160,0.18), transparent 70%), ' +
-          'radial-gradient(120% 120% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%)',
+          'radial-gradient(60% 40% at 50% 0%, rgb(var(--lamp-rgb) / 0.1), transparent 70%), ' +
+          'radial-gradient(120% 120% at 50% 50%, transparent 55%, rgb(0 0 0 / 0.55) 100%), ' +
+          'radial-gradient(rgb(var(--accent-ink-rgb) / 0.07) 1px, transparent 1px) 0 0 / 22px 22px',
       }}
     />
   );
@@ -57,7 +60,7 @@ function Placeholder({ title, owner }: { title: string; owner: string }) {
     <section className="p-8">
       <h1 className="font-heading text-3xl text-text">{title}</h1>
       <p className="mt-2 font-ui text-sm text-text-faint">TODO — {owner}</p>
-      <nav className="mt-6 flex flex-wrap gap-4 font-ui text-sm text-accent">
+      <nav className="mt-6 flex flex-wrap gap-4 font-ui text-sm text-accent-ink">
         <Link to="/explore">/explore</Link>
         <Link to="/simulation">/simulation</Link>
       </nav>

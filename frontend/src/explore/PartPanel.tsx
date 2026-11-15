@@ -27,7 +27,7 @@ function LevelSwitch() {
           key={l.id}
           onClick={() => setLevel(l.id)}
           className={`flex-1 rounded-md px-3 py-1.5 font-ui text-xs transition-colors ${
-            level === l.id ? 'bg-accent font-medium text-bg' : 'text-text-muted hover:text-text'
+            level === l.id ? 'bg-accent font-medium text-accent-on shadow-edge' : 'text-text-muted hover:text-text'
           }`}
         >
           {l.label}
@@ -74,8 +74,8 @@ function ZoomIcon() {
 
 function ActionRow({ icon, title, desc }: { icon: ReactNode; title: string; desc: string }) {
   return (
-    <li className="flex items-center gap-3 rounded-lg border border-border bg-surface/60 px-3 py-2.5 text-left">
-      <span className="flex h-8 w-8 flex-none items-center justify-center rounded-md bg-accent/10 text-accent">
+    <li className="glass-inner flex items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+      <span className="flex h-8 w-8 flex-none items-center justify-center rounded-md bg-accent text-accent-ink shadow-edge">
         {icon}
       </span>
       <span className="font-ui text-sm leading-snug">
@@ -89,7 +89,7 @@ function ActionRow({ icon, title, desc }: { icon: ReactNode; title: string; desc
 function IdlePanel() {
   return (
     <div className="flex h-full flex-col items-center justify-center text-center">
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-surface text-accent">
+      <div className="flex h-14 w-14 items-center justify-center glass-inner rounded-lg text-accent-ink">
         <BoxIcon />
       </div>
       <h2 className="mt-4 font-heading text-xl text-text">Eksploracja</h2>
@@ -157,7 +157,7 @@ function SelectedPanel({ part }: { part: PartName }) {
                   onClick={() => setFocusedVariant(v.id)}
                   className={`rounded-md border px-3 py-1.5 font-ui text-xs transition-colors ${
                     v.id === focusId
-                      ? 'border-accent bg-accent font-medium text-bg'
+                      ? 'border-accent-ink/40 bg-accent font-medium text-accent-on'
                       : 'border-border text-text-muted hover:text-text'
                   }`}
                 >
@@ -212,7 +212,7 @@ export default function PartPanel() {
   const selectedPart = useAppStore((s) => s.selectedPart);
 
   return (
-    <aside className="absolute right-4 top-4 bottom-4 flex w-[360px] flex-col overflow-hidden rounded-xl border border-border bg-panel/85 backdrop-blur">
+    <aside className="absolute right-4 top-4 bottom-4 flex w-[360px] flex-col overflow-hidden glass rounded-xl">
       {selectedPart ? (
         <SelectedPanel part={selectedPart} />
       ) : (

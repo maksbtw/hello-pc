@@ -1,50 +1,55 @@
 import type { Config } from 'tailwindcss';
 
-// Design system (ciemny motyw) wyciągnięty z Figmy — sekcja "design system".
-// Lustrzane odbicie zmiennych CSS w src/index.css. Używajcie tokenów
-// semantycznych (bg, surface, border, text, accent, state), nie surowych hexów.
+// Design system "PCB": graphite neutrals, dark green-gray accent (circuit board),
+// cold white lamp light. Mirrored as CSS variables in src/index.css and as plain
+// values for three.js in src/theme.ts. Use semantic tokens, never raw hex.
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        // --- Tła / powierzchnie (od najciemniejszej do najjaśniejszej) ---
-        bg: '#0B0D10', // app background (azure/5, Woodsmoke)
-        bg2: '#0F1216', // głębsza warstwa (azure/7)
-        panel: '#13161B', // panel (azure/9, Woodsmoke)
+        // --- Backgrounds / surfaces (darkest → lightest) ---
+        bg: '#09090B', // app background
+        bg2: '#0E0E11', // deeper layer
+        panel: '#131316', // panels
         surface: {
-          DEFAULT: '#1A1E25', // karta/pole (azure/12, Shark)
-          raised: '#222731', // uniesiona karta (azure/16)
-          overlay: '#262C35', // overlay/hover (azure/18, Charade)
+          DEFAULT: '#1A1A1F', // cards, inputs
+          raised: '#222228', // raised cards
+          overlay: '#2A2A31', // hover, overlays
         },
 
-        // --- Obramowania ---
+        // --- Borders ---
         border: {
-          DEFAULT: '#232832', // linia (azure/17, Ebony Clay)
-          subtle: '#2A2F37', // delikatna (azure/19)
-          strong: '#343B47', // mocna (azure/24, Bright Gray)
+          DEFAULT: '#26262C', // lines
+          subtle: '#2E2E35', // soft lines
+          strong: '#3B3B44', // strong lines
         },
 
-        // --- Tekst ---
+        // --- Text ---
         text: {
-          DEFAULT: '#E8EAED', // podstawowy (grey/92, Athens Gray)
-          bright: '#F5F4EF', // najjaśniejszy (grey/95, Pampas)
-          soft: '#C9CED6', // przygaszony (azure/81, Ghost)
-          muted: '#9AA3AE', // drugorzędny (azure/64, Gray Chateau)
-          dim: '#7A8490', // słaby (grey/52, Raven)
-          faint: '#5F6873', // najsłabszy (grey/41, Shuttle Gray)
+          DEFAULT: '#ECECEF', // body
+          bright: '#FAFAFA', // headings
+          soft: '#CFCFD6', // softer
+          muted: '#A1A1AA', // secondary
+          dim: '#81818B', // weak
+          faint: '#63636D', // faintest
         },
 
-        // --- Akcent (pomarańcz) ---
+        // --- Accent: PCB green ---
         accent: {
-          DEFAULT: '#F5A524', // główny (orange/55, Buttercup)
-          hover: '#D98E14', // hover/active (orange/46, Golden Bell)
-          bright: '#FFB547', // jaśniejszy (orange/64, Yellow Orange)
-          tint: '#FFD9A0', // jasny tint (orange/81, Cream Brulee)
-          soft: '#FFE7C2', // b. jasny (orange/88, Tequila)
-          subtle: '#17110A', // ciemne tło akcentu (orange/6, Eternity)
+          DEFAULT: '#26392F', // fills: buttons, active states
+          hover: '#1E2E26', // pressed
+          bright: '#33493D', // hover fill
+          ink: '#7FA592', // accent as text, icons, borders
+          on: '#F2F7F4', // text on accent fills
+          subtle: '#0B1A13', // dark accent background
         },
-        lamp: '#FFD9A0', // światło "lampy" w tle (orange/81)
+
+        // --- Lamp light (cold white) ---
+        lamp: {
+          DEFAULT: '#C9DAF2', // light, glow
+          soft: '#E6EEF8', // bulb, brightest glow
+        },
 
         // --- Dane w symulacji (kolory kategorii) ---
         data: {
@@ -100,7 +105,12 @@ export default {
         DEFAULT: '4px',
         md: '7px',
         lg: '15px',
+        xl: '22px', // glass containers (top bar, panels)
         pill: '999px',
+      },
+
+      boxShadow: {
+        edge: 'inset 0 1px 0 rgb(255 255 255 / 0.1)', // light top edge on accent fills
       },
     },
   },

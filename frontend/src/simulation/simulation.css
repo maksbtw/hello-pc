@@ -122,14 +122,14 @@
 .sim-lamp-cord {
   width: 2px;
   height: 22vh;
-  background: #2a2f37; /* color/azure/19 */
+  background: var(--border-subtle);
 }
 
 /* trapezowy klosz (gradient góra→dół) */
 .sim-lamp-shade {
   width: 170px;
   height: 34px;
-  background: linear-gradient(to bottom, #2b3038, #16191e); /* azure/19-2 → azure/10 */
+  background: linear-gradient(to bottom, var(--surface-overlay), var(--panel));
   clip-path: polygon(18% 0, 82% 0, 100% 100%, 0 100%);
 }
 
@@ -184,8 +184,8 @@
   width: 128px;
   height: 4px;
   border-radius: 4px;
-  background: var(--accent-soft); /* #ffe7c2 (orange/88 Tequila) */
-  box-shadow: 0 0 30px 10px rgba(255, 223, 170, 0.6);
+  background: var(--lamp-soft);
+  box-shadow: 0 0 30px 10px rgb(var(--lamp-rgb) / 0.55);
 }
 
 /* snop światła — wychodzi z CAŁEJ szerokości paska (nie z punktu).
@@ -202,8 +202,8 @@
   clip-path: polygon(40% 0, 60% 0, 96% 100%, 4% 100%);
   background: linear-gradient(
     to bottom,
-    rgba(255, 223, 170, 0.4),
-    rgba(255, 223, 170, 0.12) 45%,
+    rgb(var(--lamp-rgb) / 0.36),
+    rgb(var(--lamp-rgb) / 0.11) 45%,
     transparent 85%
   );
   -webkit-mask-image: linear-gradient(to right, transparent 3%, #000 50%, transparent 97%);
@@ -299,17 +299,17 @@
   }
 }
 
-/* znacznik „teraz" (żółty) — pulsująca poświata */
+/* "teraz" marker — pulsing accent glow */
 .sim-now {
   animation: sim-now 1.8s ease-in-out infinite;
 }
 @keyframes sim-now {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(245, 165, 36, 0);
+    box-shadow: 0 0 0 0 rgb(var(--accent-ink-rgb) / 0);
   }
   50% {
-    box-shadow: 0 0 12px 1px rgba(245, 165, 36, 0.6);
+    box-shadow: 0 0 12px 1px rgb(var(--accent-ink-rgb) / 0.55);
   }
 }
 

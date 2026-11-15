@@ -17,9 +17,10 @@ import {
 import type { VariantModel } from './catalog';
 import { useAppStore } from '../store/useAppStore';
 import type { PartName } from '../data/parts';
+import { THEME } from '../theme';
 
 // Kolor podświetlenia = token --accent z design systemu.
-const HIGHLIGHT_COLOR = '#F5A524';
+const HIGHLIGHT_COLOR = THEME.accentInk;
 
 // Wyłącza raycast danego mesha (nie dopisuje przecięć).
 const NO_RAYCAST = () => {};
@@ -314,7 +315,7 @@ function VariantInspectModel({
         <div
           className={`whitespace-nowrap rounded-md border px-2 py-0.5 font-ui text-xs ${
             hovered
-              ? 'border-accent bg-accent text-bg'
+              ? 'border-accent-ink/40 bg-accent text-accent-on'
               : 'border-border bg-panel/85 text-text-muted'
           }`}
         >
@@ -488,19 +489,19 @@ export default function ExploreScene() {
           odbijać i naturalne wypełnienie. Direct key dokłada ostry światłocień. */}
       <ambientLight intensity={0.3} />
       {/* Key — ciepły, z góry (kierunek klosza), lekko ku kamerze. */}
-      <directionalLight position={[0.4, 6, 1.6]} intensity={1.8} color="#FFE7C2" />
+      <directionalLight position={[0.4, 6, 1.6]} intensity={1.8} color={THEME.lampSoft} />
 
       <Environment resolution={256} frames={1}>
         {/* Klosz lampy — duża, ciepła, jasna płaszczyzna nad modelem. */}
-        <Lightformer form="rect" intensity={3} color="#FFE7C2" position={[0, 5, 0.5]} scale={[8, 3, 1]} />
+        <Lightformer form="rect" intensity={3} color={THEME.lampSoft} position={[0, 5, 0.5]} scale={[8, 3, 1]} />
         {/* Fill lewy — ciepły (orange/81). */}
-        <Lightformer form="rect" intensity={1.2} color="#FFD9A0" position={[-5, 1.5, 1]} scale={[5, 5, 1]} />
+        <Lightformer form="rect" intensity={1.2} color={THEME.lamp} position={[-5, 1.5, 1]} scale={[5, 5, 1]} />
         {/* Fill prawy/przedni — prawie biały, żywe odbicia na metalu. */}
-        <Lightformer form="rect" intensity={1.4} color="#FFF6EA" position={[4, 1, 4]} scale={[5, 5, 1]} />
+        <Lightformer form="rect" intensity={1.4} color={THEME.lampFill} position={[4, 1, 4]} scale={[5, 5, 1]} />
         {/* Rim z tyłu — chłodny kontur odcinający od tła. */}
-        <Lightformer form="rect" intensity={1} color="#CFE0FF" position={[0, 2.5, -5]} scale={[8, 4, 1]} />
+        <Lightformer form="rect" intensity={1} color={THEME.sky} position={[0, 2.5, -5]} scale={[8, 4, 1]} />
         {/* Otoczenie — ciemne ciepłe, żeby metal nie odbijał czerni. */}
-        <Lightformer form="rect" intensity={0.3} color="#3A3026" position={[0, -3, 0]} scale={[12, 12, 1]} />
+        <Lightformer form="rect" intensity={0.3} color={THEME.floorBounce} position={[0, -3, 0]} scale={[12, 12, 1]} />
       </Environment>
 
       <Suspense fallback={<LoadingScreen />}>

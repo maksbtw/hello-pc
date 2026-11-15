@@ -3,6 +3,8 @@ import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Html } from '@react-three/drei';
 import * as THREE from 'three';
 
+import { THEME } from '../theme';
+
 /**
  * Pojedynczy obracalny viewer modelu (.glb).
  * Każdy model jest wyśrodkowany do własnego środka geometrii (pivot w origin)
@@ -27,7 +29,7 @@ function PlaceholderMesh() {
   return (
     <mesh rotation={[0.4, 0.8, 0]}>
       <boxGeometry args={[1.2, 1.2, 1.2]} />
-      <meshStandardMaterial color="#F5A524" metalness={0.3} roughness={0.4} />
+      <meshStandardMaterial color={THEME.accentInk} metalness={0.3} roughness={0.4} />
     </mesh>
   );
 }
@@ -120,7 +122,7 @@ export default function Scene({ modelUrl, rotation = [0, 0, 0], view }: ScenePro
       {/* Oświetlenie offline (materiały PBR bez env-mapy są ciemne). */}
       <ambientLight intensity={0.9} />
       <directionalLight position={[3, 5, 2]} intensity={2.4} />
-      <directionalLight position={[-3, 2, -2]} intensity={1.0} color="#FFD9A0" />
+      <directionalLight position={[-3, 2, -2]} intensity={1.0} color={THEME.lamp} />
       <directionalLight position={[1, 1, 4]} intensity={1.1} />
 
       <Suspense fallback={<LoadingScreen />}>

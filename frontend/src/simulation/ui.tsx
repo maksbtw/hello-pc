@@ -13,7 +13,7 @@ export function FieldLabel({ children }: { children: ReactNode }) {
 export function Chip({ children, tone = 'neutral' }: { children: ReactNode; tone?: 'neutral' | 'accent' | 'text' }) {
   const tones = {
     neutral: 'border-border text-text-muted',
-    accent: 'border-accent/50 bg-accent/10 text-accent',
+    accent: 'border-accent-ink/40 bg-accent text-accent-ink',
     text: 'border-data-text/40 bg-data-text/5 text-data-text',
   };
   return (

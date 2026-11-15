@@ -1,191 +1,145 @@
 # PC Workshop
 
-## Quick start (Linux and macOS)
+An interactive 3D encyclopedia that shows how a computer works: explore real-looking PC parts
+in 3D and follow your own text on its journey through the hardware.
 
-Install and start **Docker with Docker Compose** and install **[Homebrew](https://brew.sh/)**
-if you do not already have them. Download or clone this repository and open a terminal
-in its root folder (the folder containing `compose.yaml`). No local Node.js, Java,
-or Maven installation is needed for this Docker setup.
+Started at HackYeah 2026. Name and domain are not final.
 
-Start the application from the project root:
+---
+
+## Audience and tone
+
+- **For curious beginners and students** with no prior knowledge.
+- **One depth level everywhere**: explain *what happens and why*, neither childish nor expert.
+  No Basics/Expert switch.
+- Visuals explain first, text supports them.
+
+## Languages
+
+- **Polish and English.** Every UI text and all content exist in both.
+- First visit: the browser language decides (Polish browser → Polish, everything else → English).
+- A **PL | EN switch** in the top bar; the choice is remembered.
+- All texts live in typed `pl` / `en` dictionaries. A missing translation is a build error.
+- Code, comments and READMEs are in English only.
+
+## Structure
+
+| Page | What it is |
+|---|---|
+| **Landing** (`/`) | Small: 3 screen-height sections only — hero, what's inside, who made it |
+| **Explore** | The 3D PC. Click a part → description, types, facts, parameters |
+| **Journeys** | Step-by-step simulations |
+| **Concepts** | Glossary of ideas (binary, bytes, clock speed, cache…) |
+| **About** | Team, credits, Buy Me a Coffee |
+
+## Explore
+
+- Parts: CPU, GPU, RAM, storage, cooling, PSU, motherboard, case, monitor.
+- Each part has **types** (2–4): technology variants, **not brands**
+  (e.g. storage → HDD / SSD SATA / SSD M.2 NVMe).
+- Each part and type has: name, tagline, description, short facts, parameters.
+- **Fact rule:** short atomic sentences, one fact per sentence, no marketing.
+
+## Journeys
+
+- **Flagship journey "Keyboard → Screen"**: the user types a short text and follows it through
+  the computer. Data changes form on the way: **characters → bytes → bits → pixels**.
+  - Starts with a **Keyboard** step (key press → key code → USB → the computer receives it).
+  - Between steps, data is shown traveling over the **motherboard "roads"** (buses).
+  - Steps: Keyboard → SSD → RAM → CPU (decode) → CPU (text as numbers) → GPU (raster) → Monitor.
+- **Per-part journeys**: one for each part, about what happens *inside* it
+  (e.g. how an SSD stores a bit, how a PSU turns wall power into 12 V).
+- The UTF-8 step shows language-specific examples: `ą` / `ł` in Polish, `é` in English, an emoji in both.
+
+## Visual identity
+
+### Palette: "PCB"
+
+Neutral near-black graphite, a dark green-gray accent like a circuit board, cold white light.
+
+| Token | Hex | Use |
+|---|---|---|
+| `bg` | `#09090B` | App background |
+| `bg-2` | `#0E0E11` | Deeper layer |
+| `panel` | `#131316` | Panels |
+| `surface` | `#1A1A1F` | Cards, inputs |
+| `surface-raised` | `#222228` | Raised cards |
+| `surface-overlay` | `#2A2A31` | Hover, overlays |
+| `border` | `#26262C` | Lines |
+| `border-subtle` | `#2E2E35` | Soft lines |
+| `border-strong` | `#3B3B44` | Strong lines |
+| `text-bright` | `#FAFAFA` | Headings |
+| `text` | `#ECECEF` | Body text |
+| `text-soft` | `#CFCFD6` | Softer text |
+| `text-muted` | `#A1A1AA` | Secondary text |
+| `text-dim` | `#81818B` | Weak text |
+| `text-faint` | `#63636D` | Faintest text |
+| `accent` | `#26392F` | PCB green: buttons, active states, fills |
+| `accent-hover` | `#1E2E26` | Accent hover |
+| `accent-bright` | `#33493D` | Lighter accent fill |
+| `accent-ink` | `#7FA592` | Accent used as text, icons, borders |
+| `accent-on` | `#F2F7F4` | Text on accent fills |
+| `accent-subtle` | `#0B1A13` | Dark accent background |
+| `lamp` | `#C9DAF2` | Lamp light (cold white) |
+| `lamp-soft` | `#E6EEF8` | Lamp bulb / brightest glow |
+
+**Data colors** (fixed teaching code in all journeys):
+
+| Token | Hex | Meaning |
+|---|---|---|
+| `data-text` | `#4ADE80` | Characters / text |
+| `data-bytes` | `#60A5FA` | Bytes |
+| `data-bits` | `#A78BFA` | Bits |
+| `data-instructions` | `#F472B6` | CPU instructions |
+
+**States:** success `#4ADE80` · info `#60A5FA` · warning `#FBBF24` · error `#F87171`.
+
+### Fonts
+
+**Space Grotesk** (headings) · **Inter** (UI) · **JetBrains Mono** (code, bytes). Self-hosted.
+
+### Consistency rules
+
+- The app must look like one product on every screen.
+- Only tokens: no raw hex values, no sizes or radii outside the scale.
+- Shared components for buttons, switches, panels, labels and hints. No one-off versions.
+- One lamp component, one 3D viewer, one motion style for the whole app.
+
+## 3D models
+
+- Must look **realistic**: the user should see a real part, not a toy.
+- **No brand models or renders** (copyright and trademarks). Realistic unbranded parts only.
+- One `.glb` per part in `frontend/public/models/`. Node names:
+  `Case, Motherboard, CPU, Cooler, RAM, GPU, SSD, PSU, Monitor`.
+  Details: `frontend/public/models/README.md`.
+
+## Platform
+
+- **Desktop only** (1280 px and wider). Smaller screens get a branded "open on a computer" page.
+- **Static site**, no backend: everything is computed in the browser.
+- **Analytics:** cookie-free, no cookie banner. Events: journey started, step reached,
+  journey finished, Buy Me a Coffee clicked.
+- **No AI**, no accounts, no ads.
+
+## Money
+
+**Buy Me a Coffee only**, placed politely: footer, About page, and one line at the end of each
+journey. Never interrupts learning.
+
+## Not decided yet
+
+- Final name and domain.
+- Where the realistic 3D models come from.
+
+---
+
+## Run locally
+
+Requires **Node.js (LTS)**.
 
 ```bash
-docker compose up --build -d
+npm run setup       # install frontend dependencies
+npm run dev:front   # http://localhost:5173
 ```
 
-Open **[http://localhost:5174](http://localhost:5174)** once the services have started.
-The backend runs on port `8080`. Ports `5174` and `8080` must be available.
-The first Docker build requires internet access.
-
-To stop the application, run `docker compose down`. For application logs, run `docker compose logs -f`.
-
----
-
-Interaktywna encyklopedia 3D komputera. Klikasz część, wybierasz jej typ i czytasz opis
-na swoim poziomie. Tryb Symulacja pokazuje, jak wpisany tekst wędruje przez podzespoły.
-
-Projekt powstał na HackYeah 2026.
-
-> Ten README to jednocześnie plan i instrukcja. Każdy znajdzie swoją sekcję w [Podziale pracy](#podział-pracy).
-
----
-
-## 1. Model informacji — trzy wymiary
-
-1. **Część** — CPU, GPU, RAM, Dysk, Chłodzenie, Zasilacz, Płyta główna, Obudowa, Mysz, Monitor.
-2. **Typ** — wariant technologiczny wewnątrz części, 2–4 na część. Np. Dysk → HDD / SSD SATA / SSD M.2 NVMe. **Nie marki — typy technologiczne.**
-3. **Poziom** — noob / expert (steruje sposobem tłumaczenia tego samego tematu).
-
-**Infrastruktura demo:** WiFi hackathonu izoluje urządzenia → demo na **JEDNYM Macu M4/24GB**, wszystko na `localhost`. Zero sieci.
-
----
-
-## 2. Propozycja typów per część
-
-- **Dysk (SSD):** HDD · SSD SATA · SSD M.2 NVMe (3)
-- **RAM:** DDR4 · DDR5
-- **GPU (Karta graficzna):** Zintegrowana (iGPU) · Dedykowana
-- **CPU (Procesor):** Desktopowy · Laptopowy (mobilny) · Serwerowy
-- **Zasilacz (PSU)**
-- **Płyta główna:** ATX · microATX · Mini-ITX
-- **Obudowa + chłodzenia**
-- **Monitor:** Panel IPS vs OLED, 60 vs 144 Hz
-
----
-
-## 3. Dwa tryby aplikacji
-
-Aplikacja działa w dwóch trybach, między którymi użytkownik się przełącza.
-
-### Tryb Demo (eksploracja)
-Zaglądamy do wnętrza komputera — można obracać modele 3D i wybierać różne typy komponentów.
-Po kliknięciu dowolnego modelu (np. RAM-u) ekran dzieli się w proporcji **2:1**: po lewej model 3D,
-po prawej tekst — opis komponentu. Zmiana typu komponentu zmienia wyświetlane informacje (opis + dane).
-To tryb interaktywnej encyklopedii.
-
-### Tryb Symulacja
-Pokazuje przepływ — jak dane/sygnał wędrują przez komputer. Modele są **domyślne i nie można
-zmieniać ich typów** (są takie jak wybrane w trybie Demo do pokazu; dodatkowe typy komponentów
-istnieją tylko w Demo jako opcje do zapoznania). **Brak wyboru poziomu — jeden, domyślny sposób
-objaśniania.** Użytkownik obserwuje przepływ krok po kroku.
-
-**Jak to działa:** użytkownik wpisuje krótki tekst (np. „Hello") i klika „Wyślij". Aplikacja pokazuje,
-co dzieje się z tym tekstem wewnątrz komputera — krok po kroku przez kolejne podzespoły: od wpisania
-(mysz/klawiatura), przez dysk, pamięć RAM, procesor, kartę graficzną, aż po wyświetlenie na ekranie.
-Na każdym kroku widać, jak dane zmieniają postać: **znak → bajty → zera i jedynki → piksele.**
-Każdy etap jest krótko opisany i podświetlony odpowiednim kolorem danych (tekst, bajty, bity, instrukcje).
-
-To tryb „zajrzyj pod maskę" — pokazuje w prosty, wizualny sposób, że za jednym słowem na ekranie
-stoi cała podróż danych przez sprzęt.
-
----
-
-## 4. Treści — przykład i zasada
-
-Każda część i typ ma opisy na poziomach + listę faktów.
-
-**Przykład — Dysk (SSD):**
-- noob: „Dysk to magazyn — tu zostają Twoje pliki, gdy wyłączysz komputer."
-- expert: „Pamięć nieulotna; różnice w nośniku i interfejsie (SATA vs NVMe/PCIe) decydują o przepustowości i opóźnieniach."
-
-Typy: HDD, SSD SATA, SSD M.2 NVMe.
-
-**Przykładowy typ HDD:**
-- **nazwa:** „HDD (talerzowy)"
-- **tagline:** „Tani, pojemny, wolny — dane na obracających się talerzach."
-- **opis noob:** „Stary typ dysku z ruchomymi częściami. Dużo miejsca za mało pieniędzy, ale wolny."
-- **opis expert:** „Nośnik magnetyczny, prędkości 5400/7200 obr/min, interfejs SATA. Wysokie opóźnienia dostępu losowego przez ruch głowicy."
-- **fakty:** HDD zapisuje dane magnetycznie na obracających się talerzach; ma ruchome części, więc jest wrażliwy na wstrząsy; najtańszy koszt za gigabajt, ale najwolniejszy z typów dysków; typowe prędkości obrotowe to 5400 lub 7200 obr/min.
-- **parametry:** interfejs — SATA; prędkość odczytu — ~100–200 MB/s; koszt/GB — najniższy.
-
-Pozostałe typy wypełniamy analogicznie.
-
-**Zasada pisania faktów:** krótkie, atomowe zdania (1 fakt = 1 zdanie), bez marketingu.
-
----
-
-## Podział pracy
-
-Max i Anton pracują na **osobnych podfolderach frontendu** i tworzą osobne strony/trasy,
-żeby unikać konfliktów w gicie.
-
-### Denis — backend (`backend/`)
-- Endpoint do liczenia bajtów tekstu wysłanego przez użytkownika.
-
-### Max — scena 3D (`frontend/src/three/`)
-- Przygotowanie sceny 3D komputera.
-- Dodanie modeli.
-- Możliwość obracania i przybliżania widoku.
-- Obsługa kliknięcia podzespołu i podświetlenie wybranej części.
-- Zapewnienie działania sceny lokalnie i offline.
-- Cała część Demo (oprócz tworzenia statycznych opisów).
-
-### Anton — tryb Symulacja + treści (`frontend/src/`)
-- Cały tryb Symulacja.
-- Wysłanie tekstu do backendu i odebranie wyniku.
-- Pokazanie przepływu danych przez komputer krok po kroku.
-- Nawigacja między krokami (dalej / wstecz).
-- Opisy wszystkich części i typów — zarówno dla Symulacji, jak i Demo.
-
----
-
-## Uruchamianie
-
-Wymagania: **Node.js (LTS)** — frontend · **JDK 21** — backend.
-
-```bash
-npm run setup   # instalacja zależności frontendu
-npm run dev     # frontend (5173) + backend (8080) naraz
-```
-
-Osobno:
-
-```bash
-npm run dev:front   # tylko frontend → http://localhost:5173
-npm run dev:back    # tylko backend  → http://localhost:8080
-```
-
-Frontend woła backend przez proxy Vite: `/api → http://localhost:8080` (bez problemów z CORS).
-Jeśli backend nie odpowiada, klient zwraca mock i pokazuje baner.
-
-**Demo działa wyłącznie lokalnie i offline** — bez zewnętrznych serwisów, baz danych i CDN-ów.
-
----
-
-## Backend / API
-
-- **Liczenie bajtów** — przekształcenie tekstu użytkownika w kolejne postacie danych (dla trybu Symulacja).
-
-Tryb Symulacja pokazuje 7 kroków przepływu (mysz → dysk → RAM → CPU → kodowanie → GPU → monitor).
-Kontrakt kroków i mock znajdują się w `frontend/src/types/api.ts` oraz `frontend/src/mocks/`.
-
----
-
-## Konwencja modeli 3D
-
-Jeden plik `.glb` na część w `frontend/public/models/`. Nazwy node'ów:
-`Case, Motherboard, CPU, Cooler, RAM, GPU, SSD, PSU, Mouse, Monitor`.
-Szczegóły: `frontend/public/models/README.md`.
-
----
-
-## Design system
-
-Ciemny motyw z pomarańczowym akcentem, wyciągnięty z Figmy. Tokeny żyją w dwóch miejscach:
-- `frontend/tailwind.config.ts` — klasy Tailwind (`bg-surface`, `text-accent`, `border-border-strong`, `rounded-md`, `font-heading`…).
-- `frontend/src/index.css` — te same wartości jako zmienne CSS (`var(--accent)`, `var(--surface)`…) do użycia poza Tailwindem (scena 3D, inline style).
-
-Fonty (lokalne, zero requestów): **Space Grotesk** (nagłówki), **Inter** (UI), **JetBrains Mono** (kod/bajty).
-Używajcie tokenów semantycznych zamiast surowych hexów — spójność punktuje w ocenie (Design 20%).
-
----
-
-## Struktura
-
-```
-/
-├─ frontend/   Vite + React + TS, Tailwind, React Router, Zustand, react-three-fiber, GSAP
-├─ backend/    Java 21 + Spring Boot 3.x, Maven (mvnw), bez bazy danych
-├─ package.json  skrypty uruchamiające całość (concurrently)
-└─ README.md
-```
+Stack: Vite, React, TypeScript, Tailwind, React Router, Zustand, react-three-fiber.

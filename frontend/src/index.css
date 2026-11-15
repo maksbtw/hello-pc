@@ -2,38 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Design system (ciemny motyw) z Figmy — sekcja "design system".
-   Lustro dla tailwind.config.ts. Używaj poza Tailwindem: var(--accent) itd. */
+/* Design system "PCB" — mirror of tailwind.config.ts.
+   Use outside Tailwind (inline styles, CSS files): var(--accent) etc.
+   *-rgb variants hold channels for alpha: rgb(var(--lamp-rgb) / 0.2). */
 :root {
-  /* Tła / powierzchnie */
-  --bg: #0b0d10;
-  --bg-2: #0f1216;
-  --panel: #13161b;
-  --surface: #1a1e25;
-  --surface-raised: #222731;
-  --surface-overlay: #262c35;
+  /* Backgrounds / surfaces */
+  --bg: #09090b;
+  --bg-2: #0e0e11;
+  --panel: #131316;
+  --panel-rgb: 19 19 22;
+  --surface: #1a1a1f;
+  --surface-rgb: 26 26 31;
+  --surface-raised: #222228;
+  --surface-overlay: #2a2a31;
 
-  /* Obramowania */
-  --border: #232832;
-  --border-subtle: #2a2f37;
-  --border-strong: #343b47;
+  /* Borders */
+  --border: #26262c;
+  --border-subtle: #2e2e35;
+  --border-strong: #3b3b44;
 
-  /* Tekst */
-  --text: #e8eaed;
-  --text-bright: #f5f4ef;
-  --text-soft: #c9ced6;
-  --text-muted: #9aa3ae;
-  --text-dim: #7a8490;
-  --text-faint: #5f6873;
+  /* Text */
+  --text: #ececef;
+  --text-bright: #fafafa;
+  --text-soft: #cfcfd6;
+  --text-muted: #a1a1aa;
+  --text-dim: #81818b;
+  --text-faint: #63636d;
 
-  /* Akcent (pomarańcz) */
-  --accent: #f5a524;
-  --accent-hover: #d98e14;
-  --accent-bright: #ffb547;
-  --accent-tint: #ffd9a0;
-  --accent-soft: #ffe7c2;
-  --accent-subtle: #17110a;
-  --lamp: #ffd9a0;
+  /* Accent: PCB green */
+  --accent: #26392f;
+  --accent-hover: #1e2e26;
+  --accent-bright: #33493d;
+  --accent-ink: #7fa592;
+  --accent-ink-rgb: 127 165 146;
+  --accent-on: #f2f7f4;
+  --accent-subtle: #0b1a13;
+
+  /* Lamp light (cold white) */
+  --lamp: #c9daf2;
+  --lamp-rgb: 201 218 242;
+  --lamp-soft: #e6eef8;
+  --lamp-soft-rgb: 230 238 248;
+
+  /* Glass material edges */
+  --glass-edge-rgb: 255 255 255;
 
   /* Dane w symulacji */
   --data-text: #4ade80;
@@ -53,6 +65,7 @@
   --radius: 4px;
   --radius-md: 7px;
   --radius-lg: 15px;
+  --radius-xl: 22px;
   --radius-pill: 999px;
 
   /* Rodziny czcionek */
@@ -72,4 +85,37 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-ui);
+}
+
+::selection {
+  background: rgb(var(--accent-ink-rgb) / 0.35);
+}
+
+@layer components {
+  /* Glass material: translucent, blurred, thin light edge on top, soft shadow.
+     Use for floating containers (top bar, side panels, main cards). */
+  .glass {
+    background: rgb(var(--panel-rgb) / 0.62);
+    -webkit-backdrop-filter: blur(22px) saturate(1.2);
+    backdrop-filter: blur(22px) saturate(1.2);
+    box-shadow:
+      inset 0 1px 0 rgb(var(--glass-edge-rgb) / 0.09),
+      inset 0 0 0 1px rgb(var(--glass-edge-rgb) / 0.05),
+      0 20px 52px -25px rgb(0 0 0 / 0.7);
+  }
+
+  /* Inner glass: blocks inside a .glass container (inputs, rows, segments). */
+  .glass-inner {
+    background: rgb(var(--surface-rgb) / 0.55);
+    box-shadow:
+      inset 0 1px 0 rgb(var(--glass-edge-rgb) / 0.06),
+      inset 0 0 0 1px rgb(var(--glass-edge-rgb) / 0.03),
+      0 8px 22px -20px rgb(0 0 0 / 0.6);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .glass {
+      background: var(--panel);
+    }
+  }
 }
