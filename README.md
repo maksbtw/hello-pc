@@ -24,32 +24,70 @@ Started at HackYeah 2026. Name and domain are not final.
 
 ## Structure
 
-| Page | What it is |
+The app is not a set of pages but a **2D table of "points"**, each with its own URL.
+A fixed camera flies between them; nothing reloads. Points are grouped into logical zones.
+
+| Zone | Points |
 |---|---|
-| **Landing** (`/`) | Small: 3 screen-height sections only — hero, what's inside, who made it |
-| **Explore** | The 3D PC. Click a part → description, types, facts, parameters |
-| **Journeys** | Step-by-step simulations |
-| **Concepts** | Glossary of ideas (binary, bytes, clock speed, cache…) |
-| **About** | Team, credits, Buy Me a Coffee |
+| **landing** (center column) | `/start`, `/about`, `/app` |
+| **main journey** (below landing) | `/main-journey` |
+| **components** (left) | row 1: `/ram`, `/ssd`, `/gpu`, `/cpu-decode` · row 2: `/hdd` (under SSD), `/cpu-text-as-number` (under CPU) |
+| **peripherals** (right) | `/monitor` |
 
-## Explore
+### The three landing points
 
-- Parts: CPU, GPU, RAM, storage, cooling, PSU, motherboard, case, monitor.
-- Each part has **types** (2–4): technology variants, **not brands**
-  (e.g. storage → HDD / SSD SATA / SSD M.2 NVMe).
+- **`/start`** — the showcase / business card (hero). The first thing a visitor sees.
+- **`/about`** — what this site is and how it works; may include a short recorded demo.
+- **`/app`** — the realistic 3D computer and the **main navigation hub**. Every other point is reached from here.
+
+## Navigation
+
+Movement is split in two:
+
+- **Vertical = navigation buttons.** Each point shows up to three buttons (top-right):
+  - **up** → the point one level above,
+  - **down** → the point one level below,
+  - **center** → always back to `/app` (the 3D computer).
+
+  There is **no "forward" button**: going deeper is driven by the content of each point, not by a generic next.
+- **Horizontal / into a zone = content.** From `/app` the 3D model leads into the first row of
+  **components** and **peripherals**. The second row (`/hdd`, `/cpu-text-as-number`) is reached with
+  arrows in the content of the first-row point above it.
+
+### Entering a part from the 3D model
+
+Clicking a part on the `/app` model does **not** fly there immediately. It first shows a short
+**info card** about that component with a **"go to component"** button; only then does the camera
+travel to the part's point.
+
+### Per-point UI config ("point settings")
+
+Shared UI repeats on every point: the navigation buttons and other common elements. Each point
+therefore carries a **declarative config** stating, for every shared element, whether it is active,
+where it leads, and what label it shows. The nav buttons are the first case of this; the same config
+holds the other repeating UI elements, so they stay consistent across points and are defined in one
+place per point.
+
+## Explore (the parts)
+
+- Each component and peripheral is a point reached from the `/app` 3D model.
+- A part point explains the part **and** its role in the data journey.
+- Parts have **types** (2–4): technology variants, **not brands**
+  (e.g. storage → HDD / SSD SATA / SSD M.2 NVMe). A deeper variant dive can live in the second row
+  (e.g. `/hdd`).
 - Each part and type has: name, tagline, description, short facts, parameters.
 - **Fact rule:** short atomic sentences, one fact per sentence, no marketing.
 
-## Journeys
+## Main journey
 
-- **Flagship journey "Keyboard → Screen"**: the user types a short text and follows it through
-  the computer. Data changes form on the way: **characters → bytes → bits → pixels**.
-  - Starts with a **Keyboard** step (key press → key code → USB → the computer receives it).
-  - Between steps, data is shown traveling over the **motherboard "roads"** (buses).
-  - Steps: Keyboard → SSD → RAM → CPU (decode) → CPU (text as numbers) → GPU (raster) → Monitor.
-- **Per-part journeys**: one for each part, about what happens *inside* it
-  (e.g. how an SSD stores a bit, how a PSU turns wall power into 12 V).
-- The UTF-8 step shows language-specific examples: `ą` / `ł` in Polish, `é` in English, an emoji in both.
+**`/main-journey` — "type a text and follow it through the computer."** The data changes form on
+the way: **characters → bytes → bits → pixels**. Its stops are the component/peripheral points, in order:
+
+`/ssd` (read from disk) → `/ram` (load into memory) → `/cpu-decode` (decode instructions) →
+`/cpu-text-as-number` (text as numbers, UTF-8) → `/gpu` (rasterization) → `/monitor` (display).
+
+- Between stops, data is shown traveling over the **motherboard "roads"** (buses).
+- The UTF-8 stop shows language-specific examples: `ą` / `ł` in Polish, `é` in English, an emoji in both.
 
 ## Visual identity
 
@@ -124,8 +162,8 @@ Neutral near-black graphite, a dark green-gray accent like a circuit board, cold
 
 ## Money
 
-**Buy Me a Coffee only**, placed politely: footer, About page, and one line at the end of each
-journey. Never interrupts learning.
+**Buy Me a Coffee only**, placed politely: footer, the `/about` point, and one line at the end of
+the main journey. Never interrupts learning.
 
 ## Not decided yet
 
