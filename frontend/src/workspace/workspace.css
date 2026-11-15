@@ -1,0 +1,34 @@
+/* The camera's viewport. `overflow: clip` (not hidden) so nothing (focus, find-in-page,
+   scrollIntoView) can scroll it and knock the camera off a point. */
+.ws-root {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  /* The "table": a faint PCB dot grid. It slides in sync with the camera. */
+  background-image: radial-gradient(rgb(var(--accent-ink-rgb) / 0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Exactly one cell in size, so translate(%) in the camera transform == cell units. */
+.ws-world {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.ws-cell {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  /* A point never scrolls as a whole; long content gets its own scrolling container. */
+  overflow: clip;
+}
+
+/* backdrop-filter re-blurs every frame while the world moves, the main source of jank on
+   weaker GPUs. During a flight, glass gets a flat tint instead; at that speed nobody can tell. */
+.ws-root[data-moving] .glass {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: rgb(var(--panel-rgb) / 0.92);
+}

@@ -70,7 +70,7 @@ export default {
       },
 
       fontFamily: {
-        heading: ['"Space Grotesk"', 'sans-serif'], // nagłówki / display
+        heading: ['"Outfit Variable"', 'sans-serif'], // headings (semibold by default, see index.css)
         ui: ['Inter', 'sans-serif'], // tekst / UI
         mono: ['"JetBrains Mono"', 'monospace'], // kod / bajty
       },

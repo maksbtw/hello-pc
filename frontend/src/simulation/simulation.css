@@ -127,6 +127,9 @@
 
 /* trapezowy klosz (gradient góra→dół) */
 .sim-lamp-shade {
+  /* above the light group, so the bar's top edge tucks under the shade */
+  position: relative;
+  z-index: 4;
   width: 170px;
   height: 34px;
   background: linear-gradient(to bottom, var(--surface-overlay), var(--panel));
@@ -180,7 +183,7 @@
 .sim-lamp-bar {
   position: relative;
   z-index: 3;
-  margin-top: -3px;
+  margin-top: -2px;
   width: 128px;
   height: 4px;
   border-radius: 4px;

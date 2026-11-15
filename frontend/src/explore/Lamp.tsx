@@ -27,15 +27,16 @@ export default function Lamp() {
       {/* Fixture: cord + shade + LED bar */}
       <div className="absolute left-1/2 top-0 flex -translate-x-1/2 flex-col items-center">
         <div className="h-3.5 w-0.5 bg-border-strong" />
+        {/* Shade sits above the LED bar, so the bar's top edge tucks under it. */}
         <div
-          className="h-[18px] w-[150px]"
+          className="relative z-10 h-[18px] w-[150px]"
           style={{
             background: 'linear-gradient(var(--surface-overlay), var(--surface))',
             clipPath: 'polygon(14% 0, 86% 0, 100% 100%, 0 100%)',
           }}
         />
         <div
-          className="-mt-0.5 h-1 w-[112px] rounded-full"
+          className="relative -mt-0.5 h-1 w-[112px] rounded-full"
           style={{
             background: 'var(--lamp-soft)',
             boxShadow:

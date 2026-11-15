@@ -69,7 +69,7 @@
   --radius-pill: 999px;
 
   /* Rodziny czcionek */
-  --font-heading: 'Space Grotesk', sans-serif;
+  --font-heading: 'Outfit Variable', sans-serif;
   --font-ui: Inter, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
@@ -92,6 +92,11 @@ body {
 }
 
 @layer components {
+  /* Headings are semibold by default; an explicit font-* weight utility still wins. */
+  .font-heading {
+    font-weight: 600;
+  }
+
   /* Glass material: translucent, blurred, thin light edge on top, soft shadow.
      Use for floating containers (top bar, side panels, main cards). */
   .glass {

@@ -4,6 +4,8 @@ import { parts } from '../data/parts';
 import type { PartName } from '../data/parts';
 import type { Level } from '../types/api';
 import { getCachedCatalog, getVariantModels } from '../three/catalog';
+import FlyLink from '../workspace/FlyLink';
+import { journeyPath } from '../workspace/journeys';
 
 /**
  * Panel boczny eksploracji (Max). Czyta selectedPart ze store i pokazuje opis
@@ -204,6 +206,13 @@ function SelectedPanel({ part }: { part: PartName }) {
         )}
 
       </div>
+
+      {/* Way out of the panel: this part's own journey, in the row under the PC. */}
+      <footer className="border-t border-border p-4">
+        <FlyLink to={journeyPath(part)} className="w-full">
+          Pokaż podróż
+        </FlyLink>
+      </footer>
     </>
   );
 }
