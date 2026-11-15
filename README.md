@@ -96,7 +96,7 @@ Neutral near-black graphite, a dark green-gray accent like a circuit board, cold
 
 ### Fonts
 
-**Space Grotesk** (headings) · **Inter** (UI) · **JetBrains Mono** (code, bytes). Self-hosted.
+**Outfit** (headings, weight 600) · **Inter** (UI) · **JetBrains Mono** (code, bytes). Self-hosted.
 
 ### Consistency rules
 
@@ -138,8 +138,9 @@ journey. Never interrupts learning.
 Requires **Node.js (LTS)**.
 
 ```bash
-npm run setup       # install frontend dependencies
-npm run dev:front   # http://localhost:5173
+cd frontend
+npm install
+npm run dev   # http://localhost:5173
 ```
 
 Stack: Vite, React, TypeScript, Tailwind, React Router, Zustand, react-three-fiber.

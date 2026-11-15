@@ -90,14 +90,3 @@ export function buildSimulation(text: string): SimulationResponse {
 export async function postSimulation(text: string): Promise<SimulationResult> {
   return { data: buildSimulation(text), usedFallback: false };
 }
-
-export async function getHealth(): Promise<boolean> {
-  try {
-    const res = await fetch('/api/health');
-    if (!res.ok) return false;
-    const body = (await res.json()) as { status?: string };
-    return body.status === 'ok';
-  } catch {
-    return false;
-  }
-}
