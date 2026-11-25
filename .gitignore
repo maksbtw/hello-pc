@@ -15,6 +15,9 @@ frontend/node_modules/
 # --- Authoring / source assets (nie runtime: mastery Blendera, podglądy) ---
 assets/
 
+# --- Board lab debug crops (frontend/tools/board) ---
+frontend/public/hero/_*
+
 # --- env ---
 .env
 .env.*
