@@ -11,6 +11,7 @@ import {
   type Vec,
 } from './geometry';
 import NotFound from '../points/NotFound';
+import MatDecals from './MatDecals';
 import './workspace.css';
 
 /**
@@ -158,6 +159,8 @@ export default function Workspace() {
   return (
     <div ref={rootRef} className="ws-root" data-moving={flight ? '' : undefined}>
       <div ref={worldRef} className="ws-world" style={{ transform: cameraTransform(camera) }}>
+        {/* PROTOTYPE: scattered "mess" on the working surface, seeded per cell. */}
+        <MatDecals />
         {flight?.passed.map((p) => (
           <Cell key={`skeleton:${p.path}`} pos={p.pos} inert>
             <p.Skeleton />

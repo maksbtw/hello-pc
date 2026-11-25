@@ -4,9 +4,41 @@
   position: absolute;
   inset: 0;
   overflow: clip;
-  /* The "table": a faint PCB dot grid. It slides in sync with the camera. */
-  background-image: radial-gradient(rgb(var(--accent-ink-rgb) / 0.07) 1px, transparent 1px);
-  background-size: 22px 22px;
+  /* PROTOTYPE "working surface": a tiling self-healing cutting mat, drawn in CSS so it
+     covers the whole table for ~nothing and slides in sync with the camera. Raw colors
+     here are placeholders — tokenize + reconcile with the PCB palette later. The fine
+     grid is 1 unit (22px), the bold grid 5 units (110px). */
+  background-color: #285a46;
+  background-image:
+    /* bold 5-unit lines */
+    repeating-linear-gradient(0deg, rgba(222, 240, 232, 0.22) 0 1.5px, transparent 1.5px 110px),
+    repeating-linear-gradient(90deg, rgba(222, 240, 232, 0.22) 0 1.5px, transparent 1.5px 110px),
+    /* fine 1-unit lines */
+    repeating-linear-gradient(0deg, rgba(222, 240, 232, 0.09) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(90deg, rgba(222, 240, 232, 0.09) 0 1px, transparent 1px 22px),
+    /* faint uneven tint so the surface isn't dead flat */
+    repeating-radial-gradient(circle at 30% 40%, rgba(0, 0, 0, 0.05) 0 180px, transparent 180px 360px);
+}
+
+/* The scattered mess sits in world space (pinned to cells), so it slides with the camera
+   at 1:1 and never blocks clicks. */
+.ws-mess-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ws-mess {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.ws-decal {
+  position: absolute;
+  line-height: 0;
+  transform-origin: center;
 }
 
 /* Exactly one cell in size, so translate(%) in the camera transform == cell units. */
