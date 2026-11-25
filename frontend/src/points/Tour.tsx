@@ -1,5 +1,5 @@
 import { BookOpen, Boxes, Route, type LucideIcon } from 'lucide-react';
-import { SkBox, SkLine } from '../workspace/Skeleton';
+import { SkLine } from '../workspace/Skeleton';
 
 /** Landing window 2 [0, -1]: a short look at what's inside, then down to the PC. */
 
@@ -22,27 +22,36 @@ const FEATURES: { icon: LucideIcon; title: string; text: string; soon?: boolean 
   },
 ];
 
+/** A ruled list, not a row of cards: the three sections read top to bottom like a contents page. */
 export function Tour() {
   return (
-    <div className="flex h-full flex-col items-center justify-center px-8">
-      <h2 className="text-center font-heading text-h2 text-text-bright">Co jest w środku</h2>
-      <div className="mt-12 grid w-full max-w-5xl grid-cols-3 gap-5">
-        {FEATURES.map(({ icon: Icon, title, text, soon }) => (
-          <section key={title} className="glass flex flex-col gap-3 rounded-xl p-6">
-            <span className="flex h-10 w-10 items-center justify-center rounded-md bg-accent text-accent-on shadow-edge">
-              <Icon size={19} strokeWidth={1.8} aria-hidden />
-            </span>
-            <h3 className="mt-2 flex items-center gap-2 font-heading text-xl text-text-bright">
-              {title}
-              {soon && (
-                <span className="rounded-pill border border-border-strong px-2 py-0.5 font-ui text-code font-medium text-text-dim">
-                  wkrótce
-                </span>
-              )}
-            </h3>
-            <p className="font-ui text-base text-text-muted">{text}</p>
-          </section>
-        ))}
+    <div className="flex h-full items-center justify-center px-8">
+      <div className="w-full max-w-3xl">
+        <h2 className="font-heading text-h2 text-text-bright">Co jest w środku</h2>
+        <ul className="mt-10 border-b border-border">
+          {FEATURES.map(({ icon: Icon, title, text, soon }) => (
+            <li
+              key={title}
+              className="grid grid-cols-[14rem_1fr] items-baseline gap-8 border-t border-border py-6"
+            >
+              <h3 className="flex items-center gap-3 font-heading text-xl text-text-bright">
+                <Icon
+                  size={20}
+                  strokeWidth={1.8}
+                  className="flex-none self-center text-accent-ink"
+                  aria-hidden
+                />
+                {title}
+                {soon && (
+                  <span className="rounded-pill border border-border-strong px-2 py-0.5 font-ui text-code text-text-dim">
+                    wkrótce
+                  </span>
+                )}
+              </h3>
+              <p className="font-ui text-md text-text-muted">{text}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
@@ -50,17 +59,20 @@ export function Tour() {
 
 export function TourSkeleton() {
   return (
-    <div className="flex h-full flex-col items-center justify-center px-8">
-      <SkLine className="h-10 w-80" />
-      <div className="mt-12 grid w-full max-w-5xl grid-cols-3 gap-5">
-        {[0, 1, 2].map((i) => (
-          <SkBox key={i} className="flex h-52 flex-col gap-3 p-6">
-            <SkBox className="h-10 w-10 rounded-md bg-surface-overlay/60" />
-            <SkLine className="mt-3 w-1/3" />
-            <SkLine className="w-11/12" />
-            <SkLine className="w-3/4" />
-          </SkBox>
-        ))}
+    <div className="flex h-full items-center justify-center px-8">
+      <div className="w-full max-w-3xl">
+        <SkLine className="h-10 w-80" />
+        <div className="mt-10">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="grid grid-cols-[14rem_1fr] gap-8 py-7">
+              <SkLine className="w-32" />
+              <div className="flex flex-col gap-2.5">
+                <SkLine className="w-11/12" />
+                <SkLine className="w-2/3" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

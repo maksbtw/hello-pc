@@ -455,3 +455,31 @@
     opacity: 1;
   }
 }
+
+/* Reduced motion: slides become fades (the step change still reads, nothing travels),
+   looping decoration stops. */
+@media (prefers-reduced-motion: reduce) {
+  .sim-title-slide,
+  .sim-title-slide--back,
+  .sim-step-enter,
+  .sim-step-enter--back {
+    animation-name: sim-fade;
+  }
+  .sim-glow,
+  .sim-hue,
+  .sim-gradient,
+  .sim-now,
+  .sim-scanline,
+  .sim-cursor,
+  .sim-lamp--flicker .sim-lamp-light {
+    animation: none;
+  }
+}
+@keyframes sim-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

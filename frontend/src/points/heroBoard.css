@@ -1,0 +1,89 @@
+/* Hero motherboard (HeroBoard.tsx).
+   Once the image decodes the board fades in at its top edge and the view immediately
+   scrolls down the whole board at a steady pace, pauses, glides back to the top, pauses,
+   and repeats. */
+
+.hero-board {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  container-type: size; /* the stage sizes and scrolls against this box */
+  /* melt the board into the workspace at the window edges */
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent),
+    linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent),
+    linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+  mask-composite: intersect;
+}
+
+/* The whole board: as wide as the window, or wider on tall/narrow windows so that it's
+   always clearly taller than the window and has somewhere to scroll. */
+.hb-stage {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: max(100cqw, 125cqh);
+  transform: translateX(-50%);
+  will-change: transform;
+}
+.hb-photo,
+.hb-shade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hb-photo {
+  opacity: 0;
+  transition: opacity 0.6s ease-out;
+}
+.hero-board[data-ready] .hb-photo {
+  opacity: 0.8;
+}
+
+.hero-board[data-ready] .hb-stage {
+  animation: hb-scroll 52s infinite;
+}
+/* Down the board at a steady pace from the first frame, a beat at the bottom, a smooth
+   glide back to the top, a beat. */
+@keyframes hb-scroll {
+  0% {
+    transform: translate(-50%, 0);
+    animation-timing-function: linear;
+  }
+  80% {
+    transform: translate(-50%, calc(100cqh - 100%));
+  }
+  84% {
+    transform: translate(-50%, calc(100cqh - 100%));
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  96%,
+  100% {
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Keeps the headline readable over the board: dark at the centre, open at the edges. */
+.hb-shade {
+  background: radial-gradient(
+    46% 42% at 50% 50%,
+    rgb(9 9 11 / 0.82),
+    rgb(9 9 11 / 0.55) 55%,
+    rgb(9 9 11 / 0) 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-board[data-ready] .hb-stage {
+    animation: none;
+  }
+  .hb-photo {
+    transition: none;
+  }
+}

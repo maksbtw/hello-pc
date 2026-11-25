@@ -335,7 +335,7 @@ export function RamStepView({ meta }: { step: RamStep; meta: StepMeta }) {
               <span className={f.on ? 'text-text' : 'text-text-dim'}>{addr8(f.addr)}</span>
               <span className={f.on ? 'text-data-text' : 'text-text-dim'}>{hex2(f.byte)}</span>
               <span className={f.on ? 'text-data-bytes' : 'text-text-dim'}>{f.byte}</span>
-              <span className={f.on ? 'text-text-muted' : 'text-text-faint'}>
+              <span className={f.on ? 'text-text-muted' : 'text-text-dim'}>
                 {f.on && ch ? `„${ch}"` : f.byte === 0 ? 'koniec tekstu' : 'inne dane'}
               </span>
             </div>

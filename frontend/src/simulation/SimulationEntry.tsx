@@ -93,7 +93,7 @@ export default function SimulationEntry() {
               autoFocus
               spellCheck={false}
               aria-label="Tekst do symulacji"
-              className="w-full glass-inner rounded-lg border border-transparent px-5 py-4 font-mono text-xl text-text placeholder:text-text-faint focus:border-accent-ink/60 focus:outline-none disabled:opacity-60"
+              className="w-full glass-inner rounded-lg border border-transparent px-5 py-4 font-mono text-xl text-text placeholder:text-text-dim focus:border-accent-ink/60 focus:outline-none disabled:opacity-60"
             />
 
             <div className="flex w-full items-center justify-between font-mono text-sm text-text-dim">

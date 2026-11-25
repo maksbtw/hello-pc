@@ -91,11 +91,100 @@ body {
   font-size-adjust: 0.56;
 }
 
+/* On-brand keyboard focus ring (mouse clicks don't show it). */
+:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p,
+li {
+  text-wrap: pretty;
+}
+
 ::selection {
   background: rgb(var(--accent-ink-rgb) / 0.35);
 }
 
 @layer components {
+  /* --- Keycap button (FlyLink variant="key") ---
+     A mechanical keycap in a plate. Three layers:
+       .keycap       the socket: a dark recess in the plate the key sits in;
+       .keycap-body  the cap's skirt: tapered sides, shaded like a sculpted OEM-profile cap;
+       .keycap-top   the dished top face, inset more at the bottom (seen slightly from above).
+     The whole cap travels into the socket when pressed (mouse, or Enter via data-pressed)
+     and springs back with a small overshoot, like a switch. */
+  .keycap {
+    --key-radius: 12px;
+    position: relative;
+    display: inline-flex;
+    padding: 6px;
+    border-radius: calc(var(--key-radius) + 6px);
+    background: rgb(0 0 0 / 0.55);
+    box-shadow:
+      inset 0 3px 8px rgb(0 0 0 / 0.85),
+      0 1px 0 rgb(255 255 255 / 0.05);
+    color: var(--accent-on);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .keycap-body {
+    position: relative;
+    display: flex;
+    padding: 4px 8px 15px;
+    border-radius: var(--key-radius);
+    /* Skirt: darker towards the left/right edges, darkest at the front (bottom). */
+    background:
+      linear-gradient(90deg, rgb(0 0 0 / 0.28), transparent 14%, transparent 86%, rgb(0 0 0 / 0.28)),
+      linear-gradient(180deg, var(--accent) 0%, var(--accent-hover) 60%, var(--accent-subtle) 100%);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.1),
+      inset 0 -1px 0 rgb(255 255 255 / 0.04),
+      0 7px 9px -3px rgb(0 0 0 / 0.7);
+    transform: translateY(-4px);
+    /* Release: a quick spring back with a little overshoot. */
+    transition:
+      transform 220ms cubic-bezier(0.3, 1.7, 0.55, 1),
+      box-shadow 220ms ease-out;
+  }
+  .keycap-top {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.9rem 0.9rem;
+    border-radius: calc(var(--key-radius) - 3px);
+    background: radial-gradient(160% 140% at 50% 15%, var(--accent-bright), var(--accent) 75%);
+    /* Cylindrical dish: shaded inner top edge, a faint catch-light on the inner bottom. */
+    box-shadow:
+      0 0 0 1px rgb(0 0 0 / 0.25),
+      inset 0 7px 10px -7px rgb(0 0 0 / 0.45),
+      inset 0 -1px 0 rgb(255 255 255 / 0.09),
+      inset 0 1px 0 rgb(255 255 255 / 0.12);
+  }
+  .keycap:hover .keycap-body {
+    transform: translateY(-3px);
+  }
+  /* Pressed: the cap bottoms out in the socket; the skirt shadow almost disappears. */
+  .keycap:active .keycap-body,
+  .keycap[data-pressed] .keycap-body {
+    transform: translateY(1px);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.08),
+      0 1px 2px rgb(0 0 0 / 0.7);
+    transition:
+      transform 60ms cubic-bezier(0.4, 0, 1, 1),
+      box-shadow 60ms;
+  }
+  .keycap:focus-visible {
+    outline-offset: 4px;
+  }
+
   /* Headings are semibold by default; an explicit font-* weight utility still wins. */
   .font-heading {
     font-weight: 600;

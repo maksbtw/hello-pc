@@ -1,9 +1,10 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
+import { ChevronRight, X } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { parts } from '../data/parts';
 import type { PartName } from '../data/parts';
 import type { Level } from '../types/api';
-import { getCachedCatalog, getVariantModels } from '../three/catalog';
+import { ASSEMBLY_PARTS, getCachedCatalog, getVariantModels } from '../three/catalog';
 import FlyLink from '../workspace/FlyLink';
 import { journeyPath } from '../workspace/journeys';
 
@@ -39,69 +40,43 @@ function LevelSwitch() {
   );
 }
 
-// --- Ikony akcji (inline SVG, offline, dziedziczą currentColor) ---
-function BoxIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-      <path d="M3.27 6.96 12 12.01l8.73-5.05" />
-      <path d="M12 22.08V12" />
-    </svg>
-  );
-}
-function ClickIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 3l7.07 17 2.51-7.39L20 10.09 3 3z" />
-    </svg>
-  );
-}
-function RotateIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="23 4 23 10 17 10" />
-      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-    </svg>
-  );
-}
-function ZoomIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="7" />
-      <path d="M21 21l-4.35-4.35" />
-      <path d="M11 8v6M8 11h6" />
-    </svg>
-  );
+/** Small section heading inside the panel (sentence case, readable contrast). */
+function SectionTitle({ children }: { children: ReactNode }) {
+  return <h3 className="mb-2 font-heading text-sm text-text-dim">{children}</h3>;
 }
 
-function ActionRow({ icon, title, desc }: { icon: ReactNode; title: string; desc: string }) {
-  return (
-    <li className="glass-inner flex items-center gap-3 rounded-lg px-3 py-2.5 text-left">
-      <span className="flex h-8 w-8 flex-none items-center justify-center rounded-md bg-accent text-accent-ink shadow-edge">
-        {icon}
-      </span>
-      <span className="font-ui text-sm leading-snug">
-        <span className="font-medium text-text">{title}</span>{' '}
-        <span className="text-text-muted">— {desc}</span>
-      </span>
-    </li>
-  );
-}
-
+/**
+ * Nothing selected: the same parts you can click on the model, as a list. This is also
+ * the keyboard way in (the 3D scene itself only takes a mouse).
+ */
 function IdlePanel() {
+  const setSelectedPart = useAppStore((s) => s.setSelectedPart);
   return (
-    <div className="flex h-full flex-col items-center justify-center text-center">
-      <div className="flex h-14 w-14 items-center justify-center glass-inner rounded-lg text-accent-ink">
-        <BoxIcon />
-      </div>
-      <h2 className="mt-4 font-heading text-xl text-text">Eksploracja</h2>
-      <p className="mt-2 max-w-[260px] font-ui text-sm leading-relaxed text-text-muted">
-        Poznaj podzespoły komputera — wybierz część, aby ją wysunąć i zobaczyć szczegóły.
+    <div className="flex h-full flex-col">
+      <h2 className="font-heading text-2xl text-text">Wybierz część</h2>
+      <p className="mt-2 font-ui text-sm leading-relaxed text-text-muted">
+        Kliknij część na modelu albo wybierz ją z listy. Przeciągnij, żeby obrócić scenę, i
+        przewiń, żeby ją przybliżyć.
       </p>
-      <ul className="mt-6 w-full space-y-2">
-        <ActionRow icon={<ClickIcon />} title="Kliknij część" desc="wysuwa ją i otwiera opis" />
-        <ActionRow icon={<RotateIcon />} title="Przeciągnij" desc="obraca scenę 3D" />
-        <ActionRow icon={<ZoomIcon />} title="Scroll" desc="przybliża i oddala" />
+      <ul className="mt-6 border-b border-border" aria-label="Części komputera">
+        {ASSEMBLY_PARTS.map((part) => (
+          <li key={part} className="border-t border-border">
+            <button
+              type="button"
+              data-part-button={part}
+              onClick={() => setSelectedPart(part)}
+              className="group flex w-full items-center justify-between gap-3 rounded-md px-2 py-2.5 text-left font-ui text-base text-text transition-colors hover:bg-surface/60 hover:text-text-bright"
+            >
+              <span>{parts[part].title}</span>
+              <ChevronRight
+                size={18}
+                strokeWidth={1.8}
+                className="flex-none text-text-dim transition-colors group-hover:text-accent-ink"
+                aria-hidden
+              />
+            </button>
+          </li>
+        ))}
       </ul>
     </div>
   );
@@ -127,20 +102,39 @@ function SelectedPanel({ part }: { part: PartName }) {
   const facts = activeType ? activeType.facts : parts[part].facts;
   const parameters = activeType?.parameters ?? null;
 
+  // Opening a part moves focus to its title, so keyboard and screen-reader users land in
+  // the new content. Closing puts focus back on that part in the list.
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    titleRef.current?.focus({ preventScroll: true });
+  }, [part]);
+  const close = () => {
+    setSelectedPart(null);
+    requestAnimationFrame(() =>
+      document.querySelector<HTMLElement>(`[data-part-button="${part}"]`)?.focus(),
+    );
+  };
+
   return (
     <>
       <header className="flex items-start justify-between gap-3 border-b border-border p-6">
         <div>
-          <p className="font-ui text-xs uppercase tracking-wide text-text-faint">Komponent</p>
-          <h2 className="mt-1 font-heading text-2xl text-text">{parts[part].title}</h2>
+          <h2
+            ref={titleRef}
+            tabIndex={-1}
+            className="font-heading text-2xl text-text focus:outline-none"
+          >
+            {parts[part].title}
+          </h2>
           <p className="mt-1 font-ui text-sm text-text-muted">{parts[part].tagline}</p>
         </div>
         <button
-          onClick={() => setSelectedPart(null)}
-          aria-label="Zamknij"
-          className="rounded-md px-2 py-1 font-ui text-sm text-text-muted transition-colors hover:bg-surface hover:text-text"
+          type="button"
+          onClick={close}
+          aria-label="Zamknij i wróć do listy części"
+          className="flex h-8 w-8 flex-none items-center justify-center rounded-md text-text-muted transition-colors hover:bg-surface hover:text-text"
         >
-          ✕
+          <X size={18} strokeWidth={1.8} aria-hidden />
         </button>
       </header>
 
@@ -149,9 +143,7 @@ function SelectedPanel({ part }: { part: PartName }) {
 
         {hasVariantRow && (
           <section>
-            <p className="mb-2 font-ui text-xs uppercase tracking-wide text-text-faint">
-              Warianty
-            </p>
+            <SectionTitle>Warianty</SectionTitle>
             <div className="flex flex-wrap gap-2">
               {variantModels.map((v) => (
                 <button
@@ -178,11 +170,11 @@ function SelectedPanel({ part }: { part: PartName }) {
         </section>
 
         <section>
-          <p className="mb-2 font-ui text-xs uppercase tracking-wide text-text-faint">W skrócie</p>
+          <SectionTitle>W skrócie</SectionTitle>
           <ul className="space-y-1.5">
             {facts.map((fact, i) => (
               <li key={i} className="flex gap-2 font-ui text-sm text-text-muted">
-                <span className="mt-1.5 h-1 w-1 flex-none rounded-full bg-accent" />
+                <span className="mt-2 h-1 w-1 flex-none rounded-full bg-accent-ink" aria-hidden />
                 <span>{fact}</span>
               </li>
             ))}
@@ -191,13 +183,11 @@ function SelectedPanel({ part }: { part: PartName }) {
 
         {parameters && Object.keys(parameters).length > 0 && (
           <section>
-            <p className="mb-2 font-ui text-xs uppercase tracking-wide text-text-faint">
-              Parametry
-            </p>
+            <SectionTitle>Parametry</SectionTitle>
             <dl className="space-y-1.5">
               {Object.entries(parameters).map(([k, v]) => (
                 <div key={k} className="flex gap-3 font-ui text-sm">
-                  <dt className="w-32 flex-none text-text-faint">{k}</dt>
+                  <dt className="w-32 flex-none text-text-dim">{k}</dt>
                   <dd className="text-text-muted">{v}</dd>
                 </div>
               ))}

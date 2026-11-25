@@ -5,13 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PC Workshop</title>
     <!-- UI font: Cabinet Grotesk (Fontshare, ITF Free Font License). The license doesn't let us
-         ship the files in the repo, so it loads from Fontshare's CDN. -->
+         ship the files in the repo, so it loads from Fontshare's CDN. Loaded without blocking
+         the first render (media="print" swaps to "all" once it arrives); text shows in the
+         fallback for a moment, then swaps. -->
     <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
     <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
     <link
       rel="stylesheet"
       href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap"
+      media="print"
+      onload="this.media = 'all'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap"
+      />
+    </noscript>
+    <!-- Hero motherboard: the first thing on screen, so start fetching it right away. -->
+    <link rel="preload" as="image" href="/hero/retro.webp" type="image/webp" fetchpriority="high" />
   </head>
   <body>
     <div id="root"></div>

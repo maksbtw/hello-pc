@@ -1,15 +1,34 @@
 // Single source of truth: every URL is one point on the table.
 // Adding a page = adding a row here (with a Component and a Skeleton).
-import type { ComponentType } from 'react';
+import { lazy, type ComponentType } from 'react';
 import type { Vec } from './geometry';
 import { parts, type PartName } from '../data/parts';
 import { JOURNEY_ROW_Y, PART_JOURNEY_X, journeyPath } from './journeys';
 
 import { Start, StartSkeleton } from '../points/Start';
 import { Tour, TourSkeleton } from '../points/Tour';
-import { ExplorePoint, ExploreSkeleton } from '../points/ExplorePoint';
-import { SimulationPoint, SimulationSkeleton } from '../points/SimulationPoint';
+import { ExploreSkeleton, SimulationSkeleton } from '../points/Skeletons';
 import { PartJourney, PartJourneySkeleton } from '../points/PartJourney';
+
+// The 3D windows pull in three.js, drei and GSAP: load them as separate chunks. The
+// Workspace shows their skeleton while a chunk loads. Once the landing is idle we fetch
+// them in the background, so by the time someone flies down they're usually ready.
+const loadExplore = () => import('../points/ExplorePoint');
+const loadSimulation = () => import('../points/SimulationPoint');
+const ExplorePoint = lazy(loadExplore);
+const SimulationPoint = lazy(loadSimulation);
+
+if (typeof window !== 'undefined') {
+  const prefetch = () => {
+    void loadExplore();
+    void loadSimulation();
+  };
+  window.addEventListener(
+    'load',
+    () => ('requestIdleCallback' in window ? requestIdleCallback(prefetch) : setTimeout(prefetch, 1500)),
+    { once: true },
+  );
+}
 
 /** A way out of a window, shown in the top-right nav while you're on it. */
 export type Exit = {
@@ -49,7 +68,8 @@ export const POINTS: Point[] = [
     path: '/',
     pos: [0, 0],
     label: 'Start',
-    exits: [{ to: '/tour', label: 'Dalej' }],
+    // The hero's own "Dalej" is the way out; a second one in the top bar would duplicate it.
+    exits: [],
     Component: Start,
     Skeleton: StartSkeleton,
   },

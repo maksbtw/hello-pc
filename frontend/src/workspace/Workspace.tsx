@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { Suspense, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Route, Routes, useLocation, type Location } from 'react-router-dom';
 import { POINTS, pointFor, type Point } from './points';
 import {
@@ -175,10 +175,13 @@ export default function Workspace() {
               else cellRefs.current.delete(p.path);
             }}
           >
-            {/* Each cell sees its own URL (frozen while flying), not the global one. */}
-            <Routes location={loc}>
-              <Route path="*" element={<p.Component />} />
-            </Routes>
+            {/* Each cell sees its own URL (frozen while flying), not the global one.
+                Lazily loaded windows show their skeleton until their chunk arrives. */}
+            <Suspense fallback={<p.Skeleton />}>
+              <Routes location={loc}>
+                <Route path="*" element={<p.Component />} />
+              </Routes>
+            </Suspense>
           </Cell>
         ))}
       </div>

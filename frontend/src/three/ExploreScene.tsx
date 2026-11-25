@@ -22,6 +22,10 @@ import { THEME } from '../theme';
 // Kolor podświetlenia = token --accent z design systemu.
 const HIGHLIGHT_COLOR = THEME.accentInk;
 
+// Reduced motion: parts and camera jump to where they're going instead of travelling there.
+// Fades (opacity, glow) stay, so the change of state still reads.
+const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)');
+
 // Wyłącza raycast danego mesha (nie dopisuje przecięć).
 const NO_RAYCAST = () => {};
 
@@ -144,7 +148,9 @@ function AssemblyPart({ part, url, hovered, hasVariants, onHover, onUnhover }: A
     if (g) {
       // Przestań renderować dopiero po wygaśnięciu; pokaż z powrotem gdy wraca.
       g.visible = op > 0.01 || opacityTargetRef.current > 0;
-      const x = THREE.MathUtils.damp(g.position.x, offsetTargetRef.current, 8, delta);
+      const x = REDUCED_MOTION.matches
+        ? offsetTargetRef.current
+        : THREE.MathUtils.damp(g.position.x, offsetTargetRef.current, 8, delta);
       if (Math.abs(x - g.position.x) >= 0.00002) g.position.x = x;
     }
 
@@ -426,7 +432,7 @@ function CameraRig() {
       tx: targetVec.x,
       ty: targetVec.y,
       tz: targetVec.z,
-      duration: 0.9,
+      duration: REDUCED_MOTION.matches ? 0 : 0.9,
       ease: 'power3.out',
       onUpdate: () => {
         camera.position.set(s.cx, s.cy, s.cz);
