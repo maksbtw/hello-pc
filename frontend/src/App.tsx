@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import TopBar from './components/TopBar';
 import Workspace from './workspace/Workspace';
 
 /**
- * App shell: screen-width gate, the fixed lamp background, the top bar and the workspace.
+ * App shell: screen-width gate, the fixed lamp background and the workspace.
  * All routing lives in the workspace (see src/workspace/points.tsx).
  */
 
@@ -53,13 +52,9 @@ export default function App() {
       {!isDesktop ? (
         <SmallScreenGate />
       ) : (
-        <>
-          {/* Global header: fixed above the table, visible on every point. */}
-          <TopBar />
-          <div className="relative min-h-0 flex-1">
-            <Workspace />
-          </div>
-        </>
+        <div className="relative min-h-0 flex-1">
+          <Workspace />
+        </div>
       )}
     </div>
   );

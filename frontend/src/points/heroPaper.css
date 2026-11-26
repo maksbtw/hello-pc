@@ -1,0 +1,113 @@
+/* The cyanotype sheet lying on the mat (HeroPaperRender.tsx), and the links printed on it. */
+
+.hero-paper {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Holds the live scene's canvas, which outlives the hero (HeroPaperRender). */
+.hpr-slot {
+  display: contents;
+}
+
+/* Hides the mat for the moment until the sheet's still is ready, so they appear together. */
+.hpr-cover {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  pointer-events: none;
+}
+
+/* Printed content layer: turned with the sheet, over its flat writing area. */
+.hp-content {
+  position: absolute;
+}
+
+/* --- PaperLink: a link printed on the sheet --- */
+.paper-link {
+  position: absolute;
+  display: block;
+  pointer-events: auto; /* the sheet itself ignores the pointer */
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  --ink: rgb(232 246 250 / 0.7);
+  --ink-hi: rgb(240 250 252 / 0.95);
+}
+.paper-link svg {
+  display: block;
+  overflow: visible;
+}
+.pl-print {
+  fill: none;
+  stroke: var(--ink);
+  filter: blur(0.25px); /* ink sits slightly into the paper */
+  transition: stroke 0.2s;
+}
+.pl-word {
+  font-family: 'Azeret Mono Variable', monospace;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  fill: var(--ink);
+  filter: blur(0.25px);
+  transition: fill 0.2s;
+}
+.paper-link:hover .pl-print,
+.paper-link:focus-visible .pl-print {
+  stroke: var(--ink-hi);
+}
+.paper-link:hover .pl-word,
+.paper-link:focus-visible .pl-word {
+  fill: var(--ink-hi);
+}
+
+/* the pencil loop: drawn round on hover/focus, fades (not undrawn) on leave */
+.pl-loop {
+  fill: none;
+  stroke: rgb(248 252 250 / 0.92);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  filter: drop-shadow(0 0 0.6px rgb(255 255 255 / 0.5));
+  transition:
+    opacity 0.25s ease-out,
+    stroke-dashoffset 0s linear 0.25s;
+}
+.paper-link:hover .pl-loop,
+.paper-link:focus-visible .pl-loop {
+  opacity: 1;
+  stroke-dashoffset: 0;
+  transition:
+    opacity 0s,
+    stroke-dashoffset 0.55s cubic-bezier(0.55, 0.05, 0.3, 1);
+}
+
+/* press: the box gets hatched in */
+.pl-hatch {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.paper-link:active .pl-hatch,
+.paper-link[data-pressed] .pl-hatch {
+  opacity: 1;
+  transition: opacity 0.06s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pl-loop,
+  .paper-link:hover .pl-loop,
+  .paper-link:focus-visible .pl-loop {
+    transition: opacity 0.15s;
+  }
+}
+
+/* --- HeroPaperRender: the sheet, still or live --- */
+.hpr-img {
+  position: absolute;
+  max-width: none;
+  user-select: none;
+  pointer-events: none;
+}

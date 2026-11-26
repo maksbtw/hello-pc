@@ -2,12 +2,24 @@ import FlyLink from '../workspace/FlyLink';
 import { SkBox, SkLine } from '../workspace/Skeleton';
 import HeroBoard from './HeroBoard';
 import HeroRetro from './HeroRetro';
+import HeroPaperRender from './HeroPaperRender';
+import PaperLink from './PaperLink';
 
-/** Which hero the landing shows: the retro computer, or the scrolling motherboard. */
-const HERO: 'retro' | 'board' = 'retro';
+/** Which hero the landing shows: the drawing sheet, the retro computer, or the motherboard. */
+const HERO = 'paper' as 'paper' | 'retro' | 'board';
 
 /** Landing window 1 [0, 0]: what this is + one way forward (down). */
 export function Start() {
+  if (HERO === 'paper') {
+    return (
+      <div className="relative h-full">
+        <h1 className="sr-only">Zobacz, jak naprawdę działa komputer</h1>
+        <HeroPaperRender>
+          <PaperLink to="/tour" label="Dalej" className="bottom-[8%] left-[6%]" />
+        </HeroPaperRender>
+      </div>
+    );
+  }
   if (HERO === 'retro') {
     return (
       <div className="relative h-full">
